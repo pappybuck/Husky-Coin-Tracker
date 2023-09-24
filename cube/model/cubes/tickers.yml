@@ -1,0 +1,49 @@
+cubes:
+  - name: tickers
+    sql_table: tickers
+    data_source: default
+
+    joins: []
+
+    dimensions:
+      - name: product_id
+        sql: product_id
+        type: string
+
+      - name: side
+        sql: side
+        type: string
+
+      - name: timestamp
+        sql: timestamp
+        type: time
+
+    measures:
+      - name: count
+        type: count
+
+      - name: price
+        sql: price
+        type: avg
+        format: currency
+      
+      - name: high
+        sql: price
+        type: max
+        format: currency
+      
+      - name: low
+        sql: price
+        type: min
+        format: currency
+    
+    segments:
+      - name: btc
+        sql: "{CUBE}.product_id = 'BTC-USD'"
+      - name: eth
+        sql: "{CUBE}.product_id = 'ETH-USD'"
+
+    pre_aggregations:
+      # Pre-aggregation definitions go here.
+      # Learn more in the documentation: https://cube.dev/docs/caching/pre-aggregations/getting-started
+
