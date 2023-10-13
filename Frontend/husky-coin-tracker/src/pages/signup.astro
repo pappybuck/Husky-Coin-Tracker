@@ -1,0 +1,52 @@
+---
+import { signup } from "../scripts/pocket";
+
+let logged = false;
+
+if (Astro.locals.pb.authStore.isValid) {
+  logged = true;
+}
+
+if (Astro.request.method === "POST") {
+    try {
+        const data = await Astro.request.formData()
+        
+        // data.get("username")?.toString(),
+        const cookie = await signup(
+            data.get("email")?.toString(),
+            data.get("password")?.toString(),
+            data.get("name")?.toString()
+        );
+        Astro.locals.pb.authStore.loadFromCookie(cookie)
+        if (Astro.locals.pb.authStore.isValid) {
+            logged = true;
+            Astro.request.headers.append("Set-Cookie", cookie);
+        }
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+
+---
+
+<html>
+    <head>
+        <title>Test</title>
+    </head>
+    <body>
+        <a href="/">Home</a>
+        <p>{logged ? 'Logged' : 'Not logged'}</p>
+        <form method="post">
+            <label for="name">Name</label>
+            <input type="text" name="name" />
+            <!-- <label for="username">Username</label> -->
+            <!-- <input type="text" name="username" /> -->
+            <label for="email">Email</label>
+            <input type="text" name="email" />
+            <label for="password">Password</label>
+            <input type="password" name="password" />
+            <input type="submit" value="Submit" />
+        </form>
+    </body>
+</html>

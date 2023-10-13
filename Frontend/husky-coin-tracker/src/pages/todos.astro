@@ -1,0 +1,26 @@
+---
+
+type todo = {
+  isDone: boolean
+  created: Date
+  todo: string
+  updated: Date
+}
+
+let todos : todo[] = []
+
+if (Astro.locals.pb.authStore.isValid) {
+  todos = await Astro.locals.pb.collection('todos').getFullList()
+}
+
+---
+<html>
+    <h1>Todo List</h1>
+    <a href="/logout">Logout</a>
+    <a href="/" style="margin-left: 10px;">Home</a>
+  { todos.map(todo => <div>{todo.todo}</div>) }
+</html>
+
+<script>
+    console.log("Hello from the client")
+</script>
