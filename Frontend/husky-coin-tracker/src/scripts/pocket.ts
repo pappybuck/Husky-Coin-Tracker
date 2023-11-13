@@ -4,7 +4,6 @@ const pb = new PocketBase('http://127.0.0.1:8090');
 
 export async function signup( email: string, password: string, name: string) : Promise<string> {
     const data = {
-        // "username": username,
         "email": email,
         "password": password,
         "passwordConfirm": password,

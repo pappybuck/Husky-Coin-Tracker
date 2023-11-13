@@ -1,4 +1,3 @@
-// src/middleware/index.ts
 import PocketBase from 'pocketbase';
 
 import { defineMiddleware } from 'astro/middleware';
