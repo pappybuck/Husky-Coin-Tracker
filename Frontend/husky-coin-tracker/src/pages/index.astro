@@ -1,18 +1,11 @@
 ---
-import Coin from '../components/Coin'
-import Test from '../components/test.svelte';
+// import Coin from '../components/Coin'
+import Dashboard from "../components/dashboard.astro";
+
 ---
 
-<!-- <Layout title="Welcome to Astro."> -->
 <html>
 	<main>
-		<h1> Todos </h1>
-		<a href="/todos">Todos </a>
-		<a style="margin-left: 10px;" href="/login">Login</a>
-		<a style="margin-left: 20px;" href="/logout">Logout</a>
-		<a style="margin-left: 30px;" href="/signup">SignUp</a>
-		<Test />
-		<Coin client:load/>
+		<Dashboard />
 	</main>
 </html>
-<!-- </Layout> -->
