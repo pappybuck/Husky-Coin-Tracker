@@ -16,10 +16,10 @@ if (Astro.request.method === 'POST') {
             Astro.request.headers.append("Set-Cookie", cookie);
             return Astro.redirect('/');
         } 
-        error = "Invalid credentials";
+        error = "Invalid credentials...";
     } catch (e) {
         console.error(e);
-        error = "An error occurred during login";
+        error = "An error occurred during login...";
     }
 }
 
@@ -42,9 +42,12 @@ if (Astro.locals.pb.authStore.isValid) {
             <img
                 src="https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/111.png"
                 alt="Husky Coin Tracker Logo"
-                class="mx-auto h-20 w-auto mb-4 mt-2"
+                class="mx-auto h-20 w-auto mt-2 mb-4"
             />
-
+            <p class="text-center flex flex-col mb-4">
+                Don't have an account? 
+                <a href="/signup" class="text-blue-500 hover:text-blue-700">Sign up here!</a>
+            </p>
             <form method="post">
                 <input 
                     type="text" 

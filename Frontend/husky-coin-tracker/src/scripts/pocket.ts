@@ -9,11 +9,7 @@ export async function signup( email: string, password: string, name: string) : P
         "passwordConfirm": password,
         "name": name
     };
-    try {
-        await pb.collection('users').create(data);
-    } catch (e) {
-        console.log(e);
-    }
+    await pb.collection('users').create(data);
     await pb.collection('users').authWithPassword(data.email, data.password);
     const cookie = pb.authStore.exportToCookie();
     pb.authStore.clear();

@@ -14,7 +14,7 @@ const Navbar = (props: any) => {
               class="h-12 w-auto"
             />
           </a>
-          <a href="/dashboard" class="hct-navbar-link">
+          <a href="/" class="hct-navbar-link">
             Dashboard
           </a>
           <a href="/users" class="hct-navbar-link">
