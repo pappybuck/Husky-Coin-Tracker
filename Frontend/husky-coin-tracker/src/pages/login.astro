@@ -1,5 +1,4 @@
 ---
-import Layout from '../components/Layout.astro';
 import { login } from "../scripts/pocket";
 
 let error = null;
@@ -7,16 +6,23 @@ let error = null;
 if (Astro.request.method === 'POST') {
     try {
         const data = await Astro.request.formData();
-        const cookie = await login(
-            data.get("email")?.toString(),
-            data.get("password")?.toString(),
-        );
-        Astro.locals.pb.authStore.loadFromCookie(cookie)
-        if (Astro.locals.pb.authStore.isValid) {
-            Astro.request.headers.append("Set-Cookie", cookie);
-            return Astro.redirect('/');
-        } 
-        error = "Invalid credentials...";
+        const email = data.get("email");
+        const password = data.get("password");
+
+        if (!email || !password) {
+            error = "Missing fields! Try again...";
+        } else {
+            const cookie = await login(
+            email.toString(),
+            password.toString(),
+            );
+            Astro.locals.pb.authStore.loadFromCookie(cookie)
+            if (Astro.locals.pb.authStore.isValid) {
+                Astro.request.headers.append("Set-Cookie", cookie);
+                return Astro.redirect('/');
+            } 
+            error = "Invalid credentials...";
+        }
     } catch (e) {
         console.error(e);
         error = "An error occurred during login...";

@@ -1,6 +1,6 @@
 ---
-import Users from '../components/Users';
-import Layout from '../components/Layout.astro';
+import UserSearch from '../components/UserSearch';
+import Layout from '../components/layout.astro';
 
 const users = await Astro.locals.pb.collection('users').getFullList()
 ---
@@ -11,7 +11,7 @@ const users = await Astro.locals.pb.collection('users').getFullList()
     </head>
     <body>
         <Layout>
-            <Users users={users}/>
+            <UserSearch users={users}/>
         </Layout>
     </body>
-</html>
+</html>../components/UserSearch

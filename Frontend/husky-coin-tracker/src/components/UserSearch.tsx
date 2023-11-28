@@ -5,7 +5,7 @@ interface User {
   name: string;
 }
 
-const Users = (props: any) => {
+const UserSearch = (props: any) => {
   const [searchTerm, setSearchTerm] = createSignal("");
   const [filteredUsers, setFilteredUsers] = createSignal<User[]>([]);;
 
@@ -32,7 +32,7 @@ const Users = (props: any) => {
           <input
             id="search"
             type="text"
-            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 bg-gray-200 text-gray-500 cursor-not-allowed focus:outline-none focus:ring-0 focus:border-gray-300 w-full text-xl p-4"
+            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
             placeholder="Enter a username"
             value={searchTerm()}
             onInput={(e) => {
@@ -49,4 +49,4 @@ const Users = (props: any) => {
   );
 };
 
-export default Users;
+export default UserSearch;

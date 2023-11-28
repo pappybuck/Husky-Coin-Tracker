@@ -1,5 +1,4 @@
 ---
-import Layout from '../components/Layout.astro';
 import { signup } from "../scripts/pocket";
 
 let error = null;
@@ -7,15 +6,24 @@ let error = null;
 if (Astro.request.method === "POST") {
     try {
         const data = await Astro.request.formData()
-        const cookie = await signup(
-            data.get("email")?.toString(),
-            data.get("password")?.toString(),
-            data.get("name")?.toString()
-        );
-        Astro.locals.pb.authStore.loadFromCookie(cookie)
-        if (Astro.locals.pb.authStore.isValid) {
-            Astro.request.headers.append("Set-Cookie", cookie);
-            return Astro.redirect('/');
+        const email = data.get("email");
+        const password = data.get("password");
+        const name = data.get("name");
+
+        if (!email || !password || !name) {
+            error = "Missing fields! Try again...";
+        } else {
+            const cookie = await signup(
+                email.toString(),
+                password.toString(),
+                name.toString(),
+            );
+            Astro.locals.pb.authStore.loadFromCookie(cookie)
+            if (Astro.locals.pb.authStore.isValid) {
+                Astro.request.headers.append("Set-Cookie", cookie);
+                return Astro.redirect('/');
+            }
+            error = "Something went wrong..."
         }
     } catch (e) {
         console.log(e);
