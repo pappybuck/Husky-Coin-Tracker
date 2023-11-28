@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -48,7 +48,7 @@ func main() {
 				if err != nil {
 					log.Println(err)
 				}
-				body, err := ioutil.ReadAll(response.Body)
+				body, err := io.ReadAll(response.Body)
 				if err != nil {
 					log.Println(err)
 				}
