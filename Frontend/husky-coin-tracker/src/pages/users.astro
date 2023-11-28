@@ -10,10 +10,8 @@ const users = await Astro.locals.pb.collection('users').getFullList()
         <title>Users Page</title>
     </head>
     <body>
-        <main>
-            <Layout>
-                <Users users={users}/>
-            </Layout>
-        </main>
+        <Layout>
+            <Users users={users}/>
+        </Layout>
     </body>
 </html>

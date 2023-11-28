@@ -36,22 +36,20 @@ if (Astro.request.method === "POST") {
         <title>Sign Up Page</title>
     </head>
     <body>
-        <main>
-            <Layout>
-                <a href="/">Home</a>
-                <p>{logged ? 'Logged' : 'Not logged'}</p>
-                <form method="post">
-                    <label for="name">Name</label>
-                    <input type="text" name="name" />
-                    <!-- <label for="username">Username</label> -->
-                    <!-- <input type="text" name="username" /> -->
-                    <label for="email">Email</label>
-                    <input type="text" name="email" />
-                    <label for="password">Password</label>
-                    <input type="password" name="password" />
-                    <input type="submit" value="Submit" />
-                </form>
-            </Layout>
-        </main>
+        <Layout>
+            <a href="/">Home</a>
+            <p>{logged ? 'Logged' : 'Not logged'}</p>
+            <form method="post">
+                <label for="name">Name</label>
+                <input type="text" name="name" />
+                <!-- <label for="username">Username</label> -->
+                <!-- <input type="text" name="username" /> -->
+                <label for="email">Email</label>
+                <input type="text" name="email" />
+                <label for="password">Password</label>
+                <input type="password" name="password" />
+                <input type="submit" value="Submit" />
+            </form>
+        </Layout>
     </body>
 </html>
