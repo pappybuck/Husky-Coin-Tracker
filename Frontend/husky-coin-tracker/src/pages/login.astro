@@ -2,17 +2,11 @@
 import Layout from '../components/Layout.astro';
 import { login } from "../scripts/pocket";
 
-let user = null
-let error = null
+let error = null;
 
-if (Astro.locals.pb.authStore.isValid) {
-   user = Astro.locals.pb.authStore.model
-}
-
-if (Astro.request.method === 'POST'){
+if (Astro.request.method === 'POST') {
     try {
-        const data = await Astro.request.formData()
-        
+        const data = await Astro.request.formData();
         const cookie = await login(
             data.get("email")?.toString(),
             data.get("password")?.toString(),
@@ -20,39 +14,57 @@ if (Astro.request.method === 'POST'){
         Astro.locals.pb.authStore.loadFromCookie(cookie)
         if (Astro.locals.pb.authStore.isValid) {
             Astro.request.headers.append("Set-Cookie", cookie);
-            user = Astro.locals.pb.authStore.model
-        }
+            return Astro.redirect('/');
+        } 
+        error = "Invalid credentials";
     } catch (e) {
-        console.log(e);
-        error = e.message
+        console.error(e);
+        error = "An error occurred during login";
     }
 }
 
-
+if (Astro.locals.pb.authStore.isValid) {
+  return Astro.redirect('/');
+}
 ---
 <html>
     <head>
         <title>Login Page</title>
     </head>
-    <body>
-        <Layout>
-            {user 
-            ? 
-                <div>
-                    <p> Logged in as {user.email}</p>
-                    <p> Name {user.name}</p>
-                    <p> Id {user.id}</p>
-                    <p> Username {user.username}</p>
-                    <a href="/todos">Go to todos</a>    
-                </div>
-            :
-                <form method="post">
-                    {error ? <p>{error}</p> : null}
-                    <input type="text" name="email" placeholder="email">
-                    <input type="password" name="password" placeholder="password">
-                    <input type="submit" name="submit" value="submit">
-                </form>
-            }
-        </Layout>
+    <body class="bg-gray-100 flex items-center justify-center h-screen">
+        <main class="w-full max-w-sm m-auto bg-white rounded-lg border border-primaryBorder shadow-default py-10 px-16">
+            <h1 class="text-2xl font-medium text-primary mt-4 text-center">
+                Log into
+            </h1>
+            <h1 class="text-2xl font-medium text-primary text-center">
+                Husky Coin Tracker
+            </h1>
+            <img
+                src="https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/111.png"
+                alt="Husky Coin Tracker Logo"
+                class="mx-auto h-20 w-auto mb-4 mt-2"
+            />
+
+            <form method="post">
+                <input 
+                    type="text" 
+                    name="email" 
+                    placeholder="Email" 
+                    class="w-full p-2 text-primary border rounded-md outline-none text-sm transition duration-150 ease-in-out mb-4"
+                >
+                <input 
+                    type="password" 
+                    name="password" 
+                    placeholder="Password" 
+                    class="w-full p-2 text-primary border rounded-md outline-none text-sm transition duration-150 ease-in-out mb-4"
+                >
+                <input 
+                    type="submit" 
+                    value="Login" 
+                    class="w-full py-2 rounded-md bg-red-600 text-white text-lg focus:outline-none cursor-pointer"
+                >
+                {error ? <p class="text-red-500 text-xs italic mt-4">{error}</p> : null}
+            </form>
+        </main>
     </body>
 </html>

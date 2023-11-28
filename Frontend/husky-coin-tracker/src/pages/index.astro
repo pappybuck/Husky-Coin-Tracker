@@ -1,10 +1,15 @@
 ---
+import Dashboard from "../components/dashboard.astro";
+import Layout from '../components/Layout.astro';
 ---
 
 <html>
     <head>
-        <script>
-			window.location.href = '/dashboard';
-		</script>
+        <title>Dashboard Page</title>
     </head>
+    <body>
+        <Layout>
+            <Dashboard />
+        </Layout>
+    </body>
 </html>

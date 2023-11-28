@@ -27,14 +27,19 @@ const Navbar = (props: any) => {
         <div class="flex">
           {user ? (
             <div class="flex justify-center items-center">
-              <p class="hct-navbar-link mr-4">{user.name}</p>
-              <a href={`/users/${user.id}`} class="hct-navbar-link">
+              <a href={`/users/${user.id}`} class="hct-navbar-link mr-4">
                 <img
                   src="https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg"
                   alt="Profile Picture"
                   class="hct-navbar-image w-10 border-1"
                 />
               </a>
+              <div class="flex flex-col">
+                <a href={`/users/${user.id}`} class="hct-navbar-link">
+                  {user.name}
+                </a>
+                <a href={`/logout`} class="hct-navbar-link text-sm">Logout</a>
+              </div>
             </div>
           ) : (
             <a href="/login" class="hct-navbar-link">
