@@ -1,8 +1,6 @@
 ---
-import Users from '../components/Users';
+import Dashboard from "../components/dashboard.astro";
 import Layout from '../components/Layout.astro';
-
-const users = await Astro.locals.pb.collection('users').getFullList()
 ---
 
 <html>
@@ -12,7 +10,7 @@ const users = await Astro.locals.pb.collection('users').getFullList()
     <body>
         <main>
             <Layout>
-                <Users users={users}/>
+                <Dashboard />
             </Layout>
         </main>
     </body>

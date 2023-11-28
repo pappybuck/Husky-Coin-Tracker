@@ -1,22 +1,10 @@
 ---
-// import Coin from '../components/Coin'
-import Dashboard from "../components/dashboard.astro";
-import Profile from '../components/Profile';
 ---
 
 <html>
-	<main>
-		<nav>
-            <!-- Your existing navigation items -->
-            <a href="/profile">Profile</a> <!-- Link to the Profile page -->
-        </nav>
-		<h1> Todos </h1>
-		<a href="/todos">Todos </a>
-		<a style="margin-left: 10px;" href="/login">Login</a>
-		<a style="margin-left: 20px;" href="/logout">Logout</a>
-		<a style="margin-left: 30px;" href="/signup">SignUp</a>
-        <Dashboard />
-<!-- 		<Test /> -->
-<!-- 		<Coin client:load/> -->
-	</main>
+    <head>
+        <script>
+			window.location.href = '/dashboard';
+		</script>
+    </head>
 </html>

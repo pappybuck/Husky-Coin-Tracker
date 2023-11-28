@@ -1,4 +1,8 @@
-const Navbar = () => {
+import "./styles.css";
+
+const Navbar = (props: any) => {
+  const user = props.user;
+
   return (
     <nav class="bg-black border-b-2 border-black-200 px-4 py-3">
       <div class="flex items-center justify-between">
@@ -13,24 +17,30 @@ const Navbar = () => {
           <a href="/dashboard" class="hct-navbar-link">
             Dashboard
           </a>
-          <a href="/coins" class="hct-navbar-link">
-            Coins
-          </a>
-          <a href="/portfolio" class="hct-navbar-link">
-            Portfolio
-          </a>
           <a href="/users" class="hct-navbar-link">
             Users
           </a>
+          <a href="/portfolio" class="hct-navbar-link">
+            Portfolios
+          </a>
         </div>
         <div class="flex">
-          <a href="/profile" class="hct-navbar-link">
-            <img
-              src="https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg"
-              alt="Profile Picture"
-              class="hct-navbar-image w-10 border-1"
-            />
-          </a>
+          {user ? (
+            <div class="flex justify-center items-center">
+              <p class="hct-navbar-link mr-4">{user.name}</p>
+              <a href={`/users/${user.id}`} class="hct-navbar-link">
+                <img
+                  src="https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg"
+                  alt="Profile Picture"
+                  class="hct-navbar-image w-10 border-1"
+                />
+              </a>
+            </div>
+          ) : (
+            <a href="/login" class="hct-navbar-link">
+              Login
+            </a>
+          )}
         </div>
       </div>
     </nav>

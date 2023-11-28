@@ -17,6 +17,7 @@
     "@astrojs/tailwind": "^5.0.2",
     "apexcharts": "^3.43.2-0",
     "astro": "^3.3.0",
+    "date-fns": "^2.30.0",
     "pocketbase": "^0.18.2",
     "sass": "^1.69.3",
     "solid-apexcharts": "^0.3.2",

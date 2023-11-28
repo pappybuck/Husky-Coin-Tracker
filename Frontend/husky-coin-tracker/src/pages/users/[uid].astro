@@ -1,0 +1,29 @@
+---
+import Profile from '../../components/Profile';
+import Layout from '../../components/Layout.astro';
+
+const { uid } = Astro.params;
+
+let user = null;
+
+if (uid) {
+  try {
+    user = await Astro.locals.pb.collection('users').getOne(uid)
+  } catch (error) {
+    // user not found
+  }
+}
+---
+
+<html>
+    <head>
+        <title>User Page</title>
+    </head>
+    <body>
+        <main>
+            <Layout>
+                <Profile user={user}/>
+            </Layout>
+        </main>
+    </body>
+</html>

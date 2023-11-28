@@ -1,13 +1,26 @@
 import { createSignal } from "solid-js";
+import { format } from "date-fns";
 import "./styles.css";
 
-const Profile = () => {
-  const [name, setName] = createSignal("Bryce Erickson");
-  const [email, setEmail] = createSignal("test@northeastern.edu");
-  const [location, setLocation] = createSignal("Boston, MA");
-  const [bio, setBio] = createSignal("CS @ Northeastern");
+const Profile = (props: any) => {
+  const user = props.user;
 
-  const handleSubmit = (event) => {
+  if (!user) {
+    return (
+      <div class="flex flex-col items-center justify-center h-screen">
+        <h1 class="text-4xl text-red-600 font-bold">404 - User Not Found</h1>
+        <p class="text-lg mt-4">Sorry, the requested user does not exist.</p>
+      </div>
+    );
+  }
+
+  const [name, setName] = createSignal(user.name);
+  const [email, setEmail] = createSignal(user.email);
+  const [username, _] = createSignal(user.username);
+  const [location, setLocation] = createSignal(user.location);
+  const [bio, setBio] = createSignal(user.bio);
+
+  const handleSubmit = (event: any) => {
     event.preventDefault();
     console.log("Profile data to submit:", {
       name: name(),
@@ -27,7 +40,7 @@ const Profile = () => {
             </a>
           </li>
           <li class="px-4 text-black" aria-current="page">
-            Bryce Erickson
+            {user.name}
           </li>
         </ol>
       </nav>
@@ -40,7 +53,7 @@ const Profile = () => {
             class="hct-image mb-4"
           />
           <label for="name" class="hct-label">
-            Joined November 27th, 2023
+            Joined {format(new Date(user.created), 'MMMM d, yyyy')}
           </label>
         </div>
 
@@ -57,6 +70,19 @@ const Profile = () => {
                 class="hct-textbox"
                 value={name()}
                 onInput={(e) => setName(e.target.value)}
+                readOnly
+              />
+            </div>
+            <div>
+              <label for="username" class="hct-label">
+                Username:
+              </label>
+              <input
+                id="username"
+                type="text"
+                class="hct-textbox"
+                value={username()}
+                readonly
               />
             </div>
             <div>
@@ -69,6 +95,7 @@ const Profile = () => {
                 class="hct-textbox"
                 value={email()}
                 onInput={(e) => setEmail(e.target.value)}
+                readOnly
               />
             </div>
             <div>
@@ -81,6 +108,7 @@ const Profile = () => {
                 class="hct-textbox"
                 value={location()}
                 onInput={(e) => setLocation(e.target.value)}
+                readOnly
               />
             </div>
             <div>
@@ -92,11 +120,12 @@ const Profile = () => {
                 class="hct-textbox"
                 textContent={bio()}
                 onInput={(e) => setBio(e.target.value)}
+                readOnly
               />
             </div>
-            <button type="submit" class="hct-button">
+            {/* <button type="submit" class="hct-button">
               Save Profile
-            </button>
+            </button> */}
           </form>
         </div>
       </div>
