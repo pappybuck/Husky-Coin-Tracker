@@ -5,8 +5,6 @@ const { uid } = Astro.params;
 
 let user = null;
 
-console.log(uid)
-
 if (uid) {
   try {
     user = await Astro.locals.pb.collection('users').getOne(uid)
