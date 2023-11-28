@@ -1,16 +1,8 @@
 ---
-import NavBar from '../components/NavBar';
-
-let user = null
-
-if (Astro.locals.pb.authStore.isValid) {
-   user = Astro.locals.pb.authStore.model
-}
+import Navbar from "./navbar.astro";
 ---
 
-<nav>
-  <NavBar user={user}/>
-</nav>
+<Navbar />
 <main>
-    <slot></slot>
+  <slot />
 </main>
