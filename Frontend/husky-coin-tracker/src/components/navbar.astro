@@ -4,55 +4,61 @@ const hostname = import.meta.env.PUBLIC_POCKETBASE_HOST;
 let user = null;
 
 if (Astro.locals.pb.authStore.isValid) {
-  user = Astro.locals.pb.authStore.model;
+    user = Astro.locals.pb.authStore.model;
 }
 ---
 
 <nav class="bg-black border-b-2 border-black-200 px-4 py-3">
-  <div class="flex items-center justify-between">
-    <div class="flex items-center justify-evenly space-x-16">
-      <a href="/" class="text-white hover:text-white">
-        <img
-          src="/public/logo.png"
-          alt="Logo"
-          class="h-12 w-auto"
-        />
-      </a>
-      <a href="/" class="text-white hover:text-white"> Dashboard</a>
-      <a href="/users" class="text-white hover:text-white"> Users</a>
-      <a href="/portfolio" class="text-white hover:text-white"> Portfolios</a>
-    </div>
-    <div class="flex">
-      {
-        user ? (
-          <div class="flex justify-center items-center">
-            <a
-              href={`/users/${user.id}`}
-              class="text-white hover:text-white mr-4"
-            >
-                <img
-                src={user.avatar
-                    ? `${hostname}/api/files/_pb_users_auth_/${user.id}/${user.avatar}?token=`
-                    : "/public/default_pfp.jpeg"}
-                alt="Profile Picture"
-                class="rounded-full object-cover border border-red-600 w-10"
-                />
+    <div class="flex items-center justify-between">
+        <div class="flex items-center justify-evenly space-x-16">
+            <a href="/" class="text-white hover:text-white">
+                <img src="/logo.png" alt="Logo" class="h-12 w-auto" />
             </a>
-            <div class="flex flex-col">
-              <a href={`/users/${user.id}`} class="text-white hover:text-white">
-                {user.name}
-              </a>
-              <a href={`/logout`} class="text-white hover:text-white text-sm">
-                Logout
-              </a>
-            </div>
-          </div>
-        ) : (
-          <a href="/login" class="text-white hover:text-white">
-            Login
-          </a>
-        )
-      }
+            <a href="/" class="text-white hover:text-white"> Dashboard</a>
+            <a href="/users" class="text-white hover:text-white"> Users</a>
+            <a href="/portfolio" class="text-white hover:text-white">
+                Portfolios</a
+            >
+        </div>
+        <div class="flex">
+            {
+                user ? (
+                    <div class="flex justify-center items-center">
+                        <a
+                            href={`/users/${user.id}`}
+                            class="text-white hover:text-white mr-4"
+                        >
+                            <img
+                                src={
+                                    user.avatar
+                                        ? `${hostname}/api/files/_pb_users_auth_/${user.id}/${user.avatar}?token=`
+                                        : "/default_pfp.jpeg"
+                                }
+                                alt="Profile Picture"
+                                class="rounded-full object-cover border border-red-600 w-10"
+                            />
+                        </a>
+                        <div class="flex flex-col">
+                            <a
+                                href={`/users/${user.id}`}
+                                class="text-white hover:text-white"
+                            >
+                                {user.name}
+                            </a>
+                            <a
+                                href={`/logout`}
+                                class="text-white hover:text-white text-sm"
+                            >
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                ) : (
+                    <a href="/login" class="text-white hover:text-white">
+                        Login
+                    </a>
+                )
+            }
+        </div>
     </div>
-  </div>
 </nav>

@@ -6,12 +6,12 @@ const users = await Astro.locals.pb.collection("users").getFullList();
 ---
 
 <html>
-  <head>
-    <title>Users Page</title>
-  </head>
-  <body>
-    <Layout>
-      <UserSearch client:load users={users} />
-    </Layout>
-  </body>
+    <head>
+        <title>Users Page</title>
+    </head>
+    <body>
+        <Layout>
+            <UserSearch client:load users={users} />
+        </Layout>
+    </body>
 </html>
