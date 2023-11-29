@@ -1,12 +1,8 @@
 import PocketBase from 'pocketbase';
 
-import dotenv from 'dotenv';
+const hostname = import.meta.env.PUBLIC_POCKETBASE_HOST;
 
-dotenv.config();
-
-const HOSTNAME = process.env.POCKETBASE_HOST;
-
-const pb = new PocketBase(HOSTNAME);
+const pb = new PocketBase(hostname);
 
 export async function signup( email: string, password: string, name: string) : Promise<string> {
     const data = {

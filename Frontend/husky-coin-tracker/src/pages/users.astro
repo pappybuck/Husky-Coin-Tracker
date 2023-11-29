@@ -1,17 +1,17 @@
 ---
-import UserSearch from '../components/UserSearch';
-import Layout from '../components/layout.astro';
+import UserSearch from "../components/UserSearch";
+import Layout from "../components/layout.astro";
 
-const users = await Astro.locals.pb.collection('users').getFullList()
+const users = await Astro.locals.pb.collection("users").getFullList();
 ---
 
 <html>
-    <head>
-        <title>Users Page</title>
-    </head>
-    <body>
-        <Layout>
-            <UserSearch users={users}/>
-        </Layout>
-    </body>
+  <head>
+    <title>Users Page</title>
+  </head>
+  <body>
+    <Layout>
+      <UserSearch client:load users={users} />
+    </Layout>
+  </body>
 </html>

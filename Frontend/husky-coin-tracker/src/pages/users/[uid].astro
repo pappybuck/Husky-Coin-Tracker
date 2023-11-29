@@ -1,11 +1,8 @@
 ---
 import Layout from "../../components/layout.astro";
 import { format } from "date-fns";
-import dotenv from "dotenv";
 
-dotenv.config();
-
-const HOSTNAME = process.env.POCKETBASE_HOST;
+const hostname = import.meta.env.PUBLIC_POCKETBASE_HOST;
 
 const { uid } = Astro.params;
 
@@ -41,9 +38,11 @@ if (Astro.request.method === "POST") {
       postData.location = data.get("location");
     }
 
-    if (data.get("avatar")) {
+    if (data.get("avatar") && (data.get("avatar") as File).size > 0) {
       postData.avatar = data.get("avatar");
     }
+
+    console.log(postData)
 
     await Astro.locals.pb.collection("users").update(user.id, postData);
 
@@ -82,10 +81,10 @@ const edit =
           <div class="w-1/4 p-6 flex flex-col items-center">
             <img
               src={user.avatar
-                ? `${HOSTNAME}/api/files/_pb_users_auth_/${user.id}/${user.avatar}?token=`
+                ? `${hostname}/api/files/_pb_users_auth_/${user.id}/${user.avatar}?token=`
                 : "https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg"}
               alt="Profile Picture"
-              class="rounded-lg border-2 border-red-500 mb-4"
+              class="rounded-full object-cover border-4 border-red-600"
             />
             <label for="name" class="block text-sm font-medium text-gray-700">
               Joined {format(new Date(user.created), "MMMM d, yyyy")}
@@ -93,8 +92,12 @@ const edit =
           </div>
 
           <div class="w-3/4 p-6">
-            <h2 class="text-2xl font-semibold mb-4">Profile Information</h2>
-            <form method="POST" class="space-y-8" accept-charset="UTF-8" enctype="multipart/form-data">
+            <form
+              method="POST"
+              class="space-y-8"
+              accept-charset="UTF-8"
+              enctype="multipart/form-data"
+            >
               <div>
                 <label
                   for="name"
