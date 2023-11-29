@@ -49,30 +49,38 @@ if (Astro.locals.pb.authStore.isValid) {
             <h1 class="text-2xl font-medium text-primary text-center">
                 Husky Coin Tracker
             </h1>
-            <img
-                src="https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/111.png"
-                alt="Husky Coin Tracker Logo"
-                class="mx-auto h-20 w-auto mb-4 mt-2"
-            />
-
+            <a href="/">
+                <img
+                    src="https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/111.png"
+                    alt="Husky Coin Tracker Logo"
+                    class="mx-auto h-20 w-auto mb-4 mt-2"
+                />
+            </a>
+            <p class="text-center flex flex-col mb-4">
+                Already have an account? 
+                <a href="/login" class="text-blue-500 hover:text-blue-700">Login here!</a>
+            </p>
             <form method="post" accept-charset="UTF-8">
                 <input 
                     type="text" 
                     name="name" 
                     placeholder="Full Name"
                     class="w-full p-2 text-primary border rounded-md outline-none text-sm transition duration-150 ease-in-out mb-4"
+                    required
                 />
                 <input 
                     type="text" 
                     name="email" 
                     placeholder="Email"
                     class="w-full p-2 text-primary border rounded-md outline-none text-sm transition duration-150 ease-in-out mb-4"
+                    required
                 />
                 <input 
                     type="password" 
                     name="password" 
                     placeholder="Password"
                     class="w-full p-2 text-primary border rounded-md outline-none text-sm transition duration-150 ease-in-out mb-4"
+                    required
                 />
                 <input 
                     type="submit" 

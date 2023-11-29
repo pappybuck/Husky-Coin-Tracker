@@ -1,4 +1,10 @@
 ---
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const HOSTNAME = process.env.POCKETBASE_HOST;
+
 let user = null;
 
 if (Astro.locals.pb.authStore.isValid) {
@@ -28,11 +34,13 @@ if (Astro.locals.pb.authStore.isValid) {
               href={`/users/${user.id}`}
               class="text-white hover:text-white mr-4"
             >
-              <img
-                src="https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg"
+                <img
+                src={user.avatar
+                    ? `${HOSTNAME}/api/files/_pb_users_auth_/${user.id}/${user.avatar}?token=`
+                    : "https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg"}
                 alt="Profile Picture"
                 class="rounded-lg border-2 border-red-500 w-10 border-1"
-              />
+                />
             </a>
             <div class="flex flex-col">
               <a href={`/users/${user.id}`} class="text-white hover:text-white">

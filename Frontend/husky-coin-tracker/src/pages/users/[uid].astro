@@ -1,5 +1,11 @@
 ---
-import Layout from '../../components/layout.astro';
+import Layout from "../../components/layout.astro";
+import { format } from "date-fns";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const HOSTNAME = process.env.POCKETBASE_HOST;
 
 const { uid } = Astro.params;
 
@@ -7,131 +13,218 @@ let user = null;
 
 if (uid) {
   try {
-    user = await Astro.locals.pb.collection('users').getOne(uid)
+    user = await Astro.locals.pb.collection("users").getOne(uid);
   } catch (error) {
-    console.log(error);
+    // ignore
   }
 }
 
 if (!user) {
-    return Astro.redirect('/users');
+  return Astro.redirect("/users");
 }
 
 if (Astro.request.method === "POST") {
-    try {
-        const data = await Astro.request.formData();
-				const postData = {
-					name: data.get("name"),
-					bio: data.get("bio"),
-					location: data.get("location"),
-				}
-        await Astro.locals.pb.collection('users').update(user.id, postData);
-				return Astro.redirect(`/users/${user.id}`);
-    } catch (error) {
-        console.error(error);
+  try {
+    const data = await Astro.request.formData();
+
+    const postData: any = {};
+
+    if (data.get("name")) {
+      postData.name = data.get("name");
     }
+
+    if (data.get("bio")) {
+      postData.bio = data.get("bio");
+    }
+
+    if (data.get("location")) {
+      postData.location = data.get("location");
+    }
+
+    if (data.get("avatar")) {
+      postData.avatar = data.get("avatar");
+    }
+
+    await Astro.locals.pb.collection("users").update(user.id, postData);
+
+    return Astro.redirect(`/users/${user.id}`);
+  } catch (error) {
+    console.error(error);
+  }
 }
+
+const edit =
+  Astro.locals.pb.authStore.isValid &&
+  Astro.locals.pb.authStore.model?.id == uid;
 ---
 
 <html>
-    <head>
-        <title>User Page</title>
-    </head>
-    <body>
-        <Layout>
-            <div>
-                <nav aria-label="Breadcrumb" class="p-6">
-                  <ol class="flex leading-none divide-x divide-red-400">
-                    <li class="pr-4">
-                      <a href="/users" class="text-red-500 hover:text-red-600">
-                        Users
-                      </a>
-                    </li>
-                    <li class="px-4 text-black" aria-current="page">
-                      {user.name}
-                    </li>
-                  </ol>
-                </nav>
-          
-                <div class="flex">
-                  <div class="w-1/4 p-6 flex flex-col">
-                    <img
-                      src="https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg"
-                      alt="Profile Picture"
-                      class="rounded-lg border-2 border-red-500 mb-4"
-                    />
-                    <label for="name" class="block text-sm font-medium text-gray-700">
-                      Joined {user.created}
-                    </label>
-                  </div>
-          
-                  <div class="w-3/4 p-6">
-                    <h2 class="text-2xl font-semibold mb-4">Profile Information</h2>
-                    <form method="POST" class="space-y-8" accept-charset="UTF-8">
-                      <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700">
-                          Name:
-                        </label>
-                        <input
-													name="name"
-                          type="text"
-                          class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
-                          value={user.name}
-                        />
-                      </div>
-                      <div>
-                        <label for="username" class="block text-sm font-medium text-gray-700">
-                          Username:
-                        </label>
-                        <input
-													name="username"
-                          type="text"
-                          class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none bg-gray-200 text-gray-500 cursor-not-allowed focus:outline-none focus:ring-0 focus:border-gray-300"
-                          value={user.username}
-                          readonly
-                        />
-                      </div>
-                      <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700">
-                          Email:
-                        </label>
-                        <input
-													name="email"
-                          type="email"
-                          class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none bg-gray-200 text-gray-500 cursor-not-allowed focus:outline-none focus:ring-0 focus:border-gray-300"
-                          value={user.email}
-                          readonly
-                        />
-                      </div>
-                      <div>
-                        <label for="location" class="block text-sm font-medium text-gray-700">
-                          Location:
-                        </label>
-                        <input
-													name="location"
-                          type="text"
-                          class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
-                          value={user.location}
-                        />
-                      </div>
-                      <div>
-                        <label for="bio" class="block text-sm font-medium text-gray-700">
-                          Bio:
-                        </label>
-                        <input
-													name="bio"
-													type="text"
-                          class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
-													value={user.bio}
-												/>
-											</div>
-                      <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                        Save Profile
-                      </button>
-                    </form>
-                  </div>
-                </div>
+  <head>
+    <title>User Page</title>
+  </head>
+  <body>
+    <Layout>
+      <div>
+        <nav aria-label="Breadcrumb" class="p-6">
+          <ol class="flex leading-none divide-x divide-red-400">
+            <li class="pr-4">
+              <a href="/users" class="text-red-500 hover:text-red-600">
+                Users
+              </a>
+            </li>
+            <li class="px-4 text-black" aria-current="page">
+              {user.name}
+            </li>
+          </ol>
+        </nav>
+
+        <div class="flex">
+          <div class="w-1/4 p-6 flex flex-col items-center">
+            <img
+              src={user.avatar
+                ? `${HOSTNAME}/api/files/_pb_users_auth_/${user.id}/${user.avatar}?token=`
+                : "https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg"}
+              alt="Profile Picture"
+              class="rounded-lg border-2 border-red-500 mb-4"
+            />
+            <label for="name" class="block text-sm font-medium text-gray-700">
+              Joined {format(new Date(user.created), "MMMM d, yyyy")}
+            </label>
+          </div>
+
+          <div class="w-3/4 p-6">
+            <h2 class="text-2xl font-semibold mb-4">Profile Information</h2>
+            <form method="POST" class="space-y-8" accept-charset="UTF-8" enctype="multipart/form-data">
+              <div>
+                <label
+                  for="name"
+                  class="block text-sm font-medium text-gray-700"
+                >
+                  Name:
+                </label>
+                <input
+                  name="name"
+                  type="text"
+                  class={edit
+                    ? "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                    : "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none bg-gray-200 text-gray-500 cursor-not-allowed focus:outline-none focus:ring-0 focus:border-gray-300"}
+                  value={user.name}
+                  readonly={!edit}
+                  required
+                />
               </div>
-        </Layout>
-    </body>
+              <div>
+                <label
+                  for="username"
+                  class="block text-sm font-medium text-gray-700"
+                >
+                  Username:
+                </label>
+                <input
+                  name="username"
+                  type="text"
+                  class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none bg-gray-200 text-gray-500 cursor-not-allowed focus:outline-none focus:ring-0 focus:border-gray-300"
+                  value={user.username}
+                  readonly
+                />
+              </div>
+              {
+                edit ? (
+                  <div>
+                    <label
+                      for="email"
+                      class="block text-sm font-medium text-gray-700"
+                    >
+                      Email:
+                    </label>
+                    <input
+                      name="email"
+                      type="email"
+                      class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none bg-gray-200 text-gray-500 cursor-not-allowed focus:outline-none focus:ring-0 focus:border-gray-300"
+                      value={user.email}
+                      readonly={!edit}
+                    />
+                  </div>
+                ) : (
+                  ""
+                )
+              }
+              <div>
+                <label
+                  for="location"
+                  class="block text-sm font-medium text-gray-700"
+                >
+                  Location:
+                </label>
+                <input
+                  name="location"
+                  type="text"
+                  class={edit
+                    ? "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                    : "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none bg-gray-200 text-gray-500 cursor-not-allowed focus:outline-none focus:ring-0 focus:border-gray-300"}
+                  value={user.location || edit ? user.location : "N/A"}
+                  placeholder="N/A"
+                  readonly={!edit}
+                />
+              </div>
+              <div>
+                <label
+                  for="bio"
+                  class="block text-sm font-medium text-gray-700"
+                >
+                  Bio:
+                </label>
+                <input
+                  name="bio"
+                  type="text"
+                  class={edit
+                    ? "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                    : "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none bg-gray-200 text-gray-500 cursor-not-allowed focus:outline-none focus:ring-0 focus:border-gray-300"}
+                  value={user.bio || edit ? user.bio : "N/A"}
+                  placeholder="N/A"
+                  readonly={!edit}
+                />
+              </div>
+              {
+                edit ? (
+                  <div>
+                    <label
+                      for="avatar"
+                      class="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Avatar:
+                    </label>
+                    <input
+                      type="file"
+                      name="avatar"
+                      class="block text-sm text-gray-500
+                        file:mr-4 file:py-2 file:px-4
+                        file:rounded-full file:border-0
+                        file:text-sm file:font-semibold
+                        file:bg-red-50 file:text-red-700
+                        hover:file:bg-red-100"
+                    />
+                  </div>
+                ) : (
+                  ""
+                )
+              }
+              {
+                edit ? (
+                  <button
+                    type="submit"
+                    class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                  >
+                    Save Profile
+                  </button>
+                ) : (
+                  ""
+                )
+              }
+            </form>
+          </div>
+        </div>
+      </div>
+    </Layout>
+  </body>
 </html>

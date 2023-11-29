@@ -1,6 +1,12 @@
 import PocketBase from 'pocketbase';
 
-const pb = new PocketBase('http://127.0.0.1:8090');
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const HOSTNAME = process.env.POCKETBASE_HOST;
+
+const pb = new PocketBase(HOSTNAME);
 
 export async function signup( email: string, password: string, name: string) : Promise<string> {
     const data = {
