@@ -80,7 +80,7 @@ const edit =
             <img
               src={user.avatar
                 ? `${hostname}/api/files/_pb_users_auth_/${user.id}/${user.avatar}?token=`
-                : "default_pfp.jpeg"}
+                : "/public/default_pfp.jpeg"}
               alt="Profile Picture"
               class="rounded-full object-cover border-4 border-red-600"
             />
@@ -199,11 +199,11 @@ const edit =
                       type="file"
                       name="avatar"
                       class="block text-sm text-gray-500
-                        file:mr-4 file:py-2 file:px-4
-                        file:rounded-full file:border-0
-                        file:text-sm file:font-semibold
-                        file:bg-red-50 file:text-red-700
-                        hover:file:bg-red-100"
+                            file:mr-4 file:py-2 file:px-4
+                            file:rounded-full file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-red-50 file:text-red-700
+                            hover:file:bg-red-100"
                     />
                   </div>
                 ) : (
