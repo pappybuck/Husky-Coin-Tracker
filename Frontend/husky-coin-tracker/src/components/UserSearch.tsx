@@ -20,7 +20,7 @@ const UserSearch = (props: any) => {
     } else {
       const filtered = props.users
         .filter((user: User) => user.name.toLowerCase().includes(searchValue))
-        .slice(0, 10);
+        .slice(0, 24);
       setFilteredUsers(filtered);
     }
   });
@@ -81,7 +81,7 @@ const UserSearch = (props: any) => {
                     src={
                       user.avatar
                         ? `${hostname}/api/files/_pb_users_auth_/${user.id}/${user.avatar}?token=`
-                        : "https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg"
+                        : "default_pfp.jpeg"
                     }
                     alt="Profile Picture"
                     class="h-12 w-12 rounded-full object-cover border border-red-600"

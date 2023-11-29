@@ -1,2 +1,3 @@
 data/
 *.exe
+.DS_Store

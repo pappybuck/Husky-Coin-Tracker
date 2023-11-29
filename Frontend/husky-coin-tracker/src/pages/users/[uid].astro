@@ -42,8 +42,6 @@ if (Astro.request.method === "POST") {
       postData.avatar = data.get("avatar");
     }
 
-    console.log(postData)
-
     await Astro.locals.pb.collection("users").update(user.id, postData);
 
     return Astro.redirect(`/users/${user.id}`);
@@ -82,7 +80,7 @@ const edit =
             <img
               src={user.avatar
                 ? `${hostname}/api/files/_pb_users_auth_/${user.id}/${user.avatar}?token=`
-                : "https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg"}
+                : "default_pfp.jpeg"}
               alt="Profile Picture"
               class="rounded-full object-cover border-4 border-red-600"
             />

@@ -13,7 +13,7 @@ if (Astro.locals.pb.authStore.isValid) {
     <div class="flex items-center justify-evenly space-x-16">
       <a href="/" class="text-white hover:text-white">
         <img
-          src="https://a.espncdn.com/combiner/i?img=/i/teamlogos/ncaa/500/111.png"
+          src="logo.png"
           alt="Logo"
           class="h-12 w-auto"
         />
@@ -33,7 +33,7 @@ if (Astro.locals.pb.authStore.isValid) {
                 <img
                 src={user.avatar
                     ? `${hostname}/api/files/_pb_users_auth_/${user.id}/${user.avatar}?token=`
-                    : "https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg"}
+                    : "default_pfp.jpeg"}
                 alt="Profile Picture"
                 class="rounded-full object-cover border border-red-600 w-10"
                 />
