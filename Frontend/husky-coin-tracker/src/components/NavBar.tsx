@@ -1,3 +1,5 @@
+import "./styles.css";
+
 const Navbar = () => {
   return (
     <nav class="bg-black border-b-2 border-black-200 px-4 py-3">
