@@ -15,14 +15,10 @@ const UserSearch = (props: any) => {
 
     createEffect(() => {
         const searchValue = searchTerm().toLowerCase();
-        if (!searchValue) {
-            setFilteredUsers([]);
-        } else {
-            const filtered = props.users
-                .filter((user: User) => user.name.toLowerCase().includes(searchValue))
-                .slice(0, 24);
-            setFilteredUsers(filtered);
-        }
+        const filtered = props.users
+            .filter((user: User) => user.name.toLowerCase().includes(searchValue))
+            .slice(0, 24);
+        setFilteredUsers(filtered);
     });
 
     const handleSearch = (event: Event) => {
