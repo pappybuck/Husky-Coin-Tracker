@@ -12,9 +12,12 @@ function sentenceCase(str) {
         (firstLetter) => firstLetter.toUpperCase());
 }
 
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+}
+
 // TODO: make coin take in a coin name/ticker 
 export default function Coin(coin: any) {
-    console.log("Coin: " + JSON.stringify(coin));
 
     const [coinData, setCoinData] = createSignal<number[][]>([])
 
@@ -60,27 +63,19 @@ export default function Coin(coin: any) {
 
                             <br />
                             <span style="width: 219px; height: 76px; color: black; font-size: 40px; font-family: Poppins; font-weight: 500; word-wrap: break-word">
-                                ${coin.coin.Price}
+                                ${numberWithCommas(coin.coin.Price)}
                             </span>
 
-                            <span class="ml-3" style="color: #12A318; font-size: 15px; font-family: Poppins; font-weight: 500; word-wrap: break-word">2.61%</span>
+                            <span class="ml-3" style="color: #12A318; font-size: 15px; font-family: Poppins; font-weight: 500; word-wrap: break-word"></span>
                             <div style="width: 461px; height: 101px; position: relative">
                                 <div style="left: 0px; top: 0px; position: absolute; opacity: 0.60; color: black; font-size: 16px; font-family: Poppins; font-weight: 500; word-wrap: break-word">Market Cap </div>
                                 <div style="left: 0px; top: 60px; position: absolute; opacity: 0.60; color: black; font-size: 16px; font-family: Poppins; font-weight: 500; word-wrap: break-word">24 Hour Trading Volume</div>
                                 <div style="width: 461px; height: 0px; left: 0px; top: 30px; position: absolute; opacity: 0.10; border: 1px black solid"></div>
-                                <div style="left: 295px; top: 0px; position: absolute; opacity: 0.60; color: black; font-size: 16px; font-family: Poppins; font-weight: 500; word-wrap: break-word">{coin.coin.Marketcap}</div>
+                                <div style="left: 295px; top: 0px; position: absolute; opacity: 0.60; color: black; font-size: 16px; font-family: Poppins; font-weight: 500; word-wrap: break-word">{numberWithCommas(coin.coin.Marketcap)}</div>
                                 <div style="width: 461px; height: 0px; left: 0px; top: 100px; position: absolute; opacity: 0.10; border: 1px black solid"></div>
                                 <div style="left: 295px; top: 70px; position: absolute; opacity: 0.60; color: black; font-size: 16px; font-family: Poppins; font-weight: 500; word-wrap: break-word">$6,646,952,699</div>
                             </div>
 
-                            <div style="width: 461px; height: 101px; position: relative">
-                                <div style="left: 0px; top: 0px; position: absolute; opacity: 0.60; color: black; font-size: 16px; font-family: Poppins; font-weight: 500; word-wrap: break-word">Current Supply</div>
-                                <div style="left: 0px; top: 60px; position: absolute; opacity: 0.60; color: black; font-size: 16px; font-family: Poppins; font-weight: 500; word-wrap: break-word">Total Supply</div>
-                                <div style="width: 461px; height: 0px; left: 0px; top: 30px; position: absolute; opacity: 0.10; border: 1px black solid"></div>
-                                <div style="left: 296px; top: 0px; position: absolute; opacity: 0.60; color: black; font-size: 16px; font-family: Poppins; font-weight: 500; word-wrap: break-word">19,123,456</div>
-                                <div style="width: 461px; height: 0px; left: 0px; top: 100px; position: absolute; opacity: 0.10; border: 1px black solid"></div>
-                                <div style="left: 295px; top: 70px; position: absolute; opacity: 0.60; color: black; font-size: 16px; font-family: Poppins; font-weight: 500; word-wrap: break-word">21,000,000</div>
-                            </div>
                         </span>
 
                         {/* </div> */}
