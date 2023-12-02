@@ -1,0 +1,36 @@
+---
+import Layout from "../../components/layout.astro";
+import { format } from "date-fns";
+import Coin from "../../components/Coin";
+
+const hostname = import.meta.env.PUBLIC_POCKETBASE_HOST;
+
+const { cid } = Astro.params;
+
+let coin = null;
+
+if (cid) {
+    try {
+        coin = await Astro.locals.pb.collection("DashboardCoins").getOne(cid);
+    } catch (error) {
+        // ignore
+    }
+}
+
+if (!coin) {
+    return Astro.redirect("/dashboard");
+}
+
+
+---
+
+<html>
+    <head>
+        <title>Coin Page</title>
+    </head>
+    <body>
+        <Layout>
+           <Coin client:load coin={coin} />
+        </Layout>
+    </body>
+</html>

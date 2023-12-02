@@ -1,0 +1,29 @@
+{
+  "name": "jsconvert",
+  "version": "0.1.0",
+  "description": "Es un modulo que traduce palabras a un idioma inventado.",
+  "main": "dist/src/jsconvert.js",
+  "dependencies": {},
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.0",
+    "chai": "^4.1.1",
+    "mocha": "^3.5.0"
+  },
+  "scripts": {
+    "build": "babel src/jsconvert.js -d dist",
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/roberto-cp/jsconvert.git"
+  },
+  "keywords": [
+    "js",
+    "javascript",
+    "modulo",
+    "convert"
+  ],
+  "author": "Roberto <roberto.cp92@gmail.com> (http://robertocanche.xyz/)",
+  "license": "MIT"
+}

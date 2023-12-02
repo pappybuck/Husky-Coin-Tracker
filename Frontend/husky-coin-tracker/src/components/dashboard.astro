@@ -8,6 +8,7 @@ type Coin = {
     day: number;
     week: number;
     marketcap: number;
+    id: string;
 };
 
 let coins : Coin[] = [];
@@ -23,7 +24,8 @@ for (let i = 0; i < resp.length; i++) {
         hour: coin.Hour,
         day: coin.Day,
         week: coin.Week,
-        marketcap: coin.Marketcap
+        marketcap: coin.Marketcap,
+        id: coin.id
     });
 }
 
@@ -92,10 +94,17 @@ for (let i = 0; i < resp.length; i++) {
             </tr>
         </thead>
         <tbody>
-            {coins.map((coin) => (
+                {coins.map((coin) => (
+
+                         
                 <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        <a
+                                href={`/coin/${coin.id}`}
+                            >
                         {coin.name} <span class="text-gray-400 dark:text-gray-300">({coin.symbol})</span>
+                        </a>
                     </th>
                     <td class="px-6 py-4 text-black">
                         ${coin.price.toLocaleString()}
@@ -160,7 +169,9 @@ for (let i = 0; i < resp.length; i++) {
                     <td class="px-6 py-4 text-black">
                         ${coin.marketcap.toLocaleString()}
                     </td>
+
                 </tr>
+                
             ))}
             
         </tbody>
