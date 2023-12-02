@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "date-fns": "^2.30.0",
-    "jsconvert": "^0.1.0"
-  }
-}

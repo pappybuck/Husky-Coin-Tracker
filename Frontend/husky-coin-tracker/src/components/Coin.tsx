@@ -7,12 +7,12 @@ async function getCoinData(coinName: string) {
     return data
 }
 
-function sentenceCase(str) {
+function sentenceCase(str: string) {
     return str.toLowerCase().replace(/(^|\s)\S/g,
         (firstLetter) => firstLetter.toUpperCase());
 }
 
-function numberWithCommas(x) {
+function numberWithCommas(x: number) {
     return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
 }
 
