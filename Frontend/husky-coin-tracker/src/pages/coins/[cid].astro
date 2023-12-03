@@ -1,0 +1,35 @@
+---
+import Layout from "../../components/layout.astro";
+import Coin from "../../components/Coin";
+
+const { cid } = Astro.params;
+
+let coin = null;
+
+if (cid) {
+    try {
+        // TODO: verify no sql injections
+        coin = (await Astro.locals.pb
+            .collection("DashboardCoins")
+            .getList(1, 1, { filter: `CoinId = '${cid}'` }))
+            .items[0];
+    } catch (error) {
+        // ignore
+    }
+}
+
+if (!coin) {
+    return Astro.redirect("/");
+}
+---
+
+<html>
+    <head>
+        <title>Coin Page</title>
+    </head>
+    <body>
+        <Layout>
+            <Coin client:load coin={coin} />
+        </Layout>
+    </body>
+</html>
