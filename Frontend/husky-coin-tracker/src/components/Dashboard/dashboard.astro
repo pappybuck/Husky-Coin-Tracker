@@ -1,0 +1,54 @@
+---import DashboardTable from "./DashboardTable";
+
+
+export type Coin = {
+    name: string;
+    symbol: string;
+    price: number;
+    hour: number;
+    day: number;
+    week: number;
+    marketcap: number;
+};
+
+let coins : Coin[] = [];
+
+let resp = await Astro.locals.pb.collection('DashboardCoins').getFullList();
+
+for (let i = 0; i < resp.length; i++) {
+    let coin = resp[i];
+    coins.push({
+        name: coin.Name,
+        symbol: coin.Symbol,
+        price: coin.Price,
+        hour: coin.Hour,
+        day: coin.Day,
+        week: coin.Week,
+        marketcap: coin.Marketcap
+    });
+}
+
+---
+
+
+
+
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <DashboardTable coins={coins} client:load/>
+</div>
+
+
+<style lang="scss">
+
+    .negative {
+        color: red;
+        svg {
+            transform: rotate(180deg);
+        }
+    }
+
+    .positive {
+        color: green;
+    }
+    
+</style>
