@@ -2,6 +2,7 @@
 
 
 export type Coin = {
+    id: string;
     name: string;
     symbol: string;
     price: number;
@@ -18,6 +19,7 @@ let resp = await Astro.locals.pb.collection('DashboardCoins').getFullList();
 for (let i = 0; i < resp.length; i++) {
     let coin = resp[i];
     coins.push({
+        id: coin.CoinId,
         name: coin.Name,
         symbol: coin.Symbol,
         price: coin.Price,

@@ -124,7 +124,9 @@ export default function DashboardTable( {coins} : {coins: Coin[]} ) {
                 {(coin) => (
                 <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    <a href={`/coins/${coin.id}`}>
                         {coin.name} <span class="text-gray-400 dark:text-gray-300">({coin.symbol})</span>
+                    </a>
                     </th>
                     <td class="px-6 py-4 text-black">
                         ${coin.price.toLocaleString()}
