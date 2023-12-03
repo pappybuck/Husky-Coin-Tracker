@@ -1,0 +1,19 @@
+---
+import AdminDashboard from '../components/react/AdminDashboard.jsx';
+import Layout from '../components/layout.astro';
+
+const users = await Astro.locals.pb.collection("users").getFullList();
+const coins = await Astro.locals.pb.collection("DashboardCoins").getFullList();
+---
+
+<html>
+    <head>
+        <title>Admin Dashboard</title>
+    </head>
+    <body>
+        <Layout>
+            <AdminDashboard client:load users={users} coins={coins}/>
+        </Layout>
+    </body>
+</html>
+
