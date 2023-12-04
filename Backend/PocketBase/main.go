@@ -71,6 +71,7 @@ func UpdateDashboard(app *pocketbase.PocketBase) {
 
 	for _, record := range records {
 		response, err := http.Get("https://api.coingecko.com/api/v3/coins/" + record.Get("CoinId").(string))
+		
 		if err != nil {
 			log.Println(err)
 		}

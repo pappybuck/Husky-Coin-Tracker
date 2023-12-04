@@ -7,6 +7,11 @@ async function getCoinData(coinName: string) {
     return data
 }
 
+// async function getCoinIcon(coinSymbol :string) {
+//     let res = await fetch(`https://assets.coincap.io/assets/icons/${coinSymbol}@2x.png`)
+//     let data = await res.
+// }
+
 function sentenceCase(str: string) {
     return str.toLowerCase().replace(/(^|\s)\S/g,
         (firstLetter) => firstLetter.toUpperCase());
@@ -38,7 +43,7 @@ export default function Coin(coin: any) {
                     <nav aria-label="Breadcrumb" class="p-6">
                         <ol class="flex leading-none divide-x divide-red-400">
                             <li class="pr-4">
-                                <a href="/users" class="text-red-500 hover:text-red-600">
+                                <a href="/" class="text-red-500 hover:text-red-600">
                                     Coins
                                 </a>
                             </li>
@@ -57,7 +62,11 @@ export default function Coin(coin: any) {
                             <span class=""
                                 style="width: 219px; height: 76px; color: black; font-size: 40px; font-family: Poppins; font-weight: 500; word-wrap: break-word">
                                 {sentenceCase(coin.coin.CoinId)}
+                                {/* {await getCoinIcon(coin.coin.Symbol)} */}
+
                             </span>
+
+
                             <span class="ml-2"
                                 style="opacity: 0.30; color: black; font-size: 15px; font-family: Poppins; font-weight: 500;">{coin.coin.Symbol}</span>
 
