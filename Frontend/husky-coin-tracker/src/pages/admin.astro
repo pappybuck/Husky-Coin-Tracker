@@ -9,7 +9,7 @@ if (Astro.locals.pb.authStore.isValid) {
 }
 
 if (!user?.isAdmin) {
-    return Astro.redirect("/users");
+    return Astro.redirect("/");
 }
 
 const users = await Astro.locals.pb.collection("users").getFullList();
