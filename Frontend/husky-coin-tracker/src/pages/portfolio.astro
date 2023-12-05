@@ -1,0 +1,15 @@
+---
+import Portfolio from "../components/react/Portfolio";
+import Layout from "../components/layout.astro";
+---
+
+<html>
+    <head>
+        <title>Portfolio Page</title>
+    </head>
+    <body>
+        <Layout>
+            <Portfolio client:load />
+        </Layout>
+    </body>
+</html>

@@ -1,0 +1,81 @@
+.portfolio-page-container {
+    padding-left: 15%;
+    padding-right: 15%;
+}
+
+.title {
+    font-size: 40px;
+    color: darkgrey;
+}
+
+.statistic-boxes-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.statistic-box {
+    width: 20%;
+    height: 120px;
+    border: 2px solid black;
+    border-color: lightgrey;
+    border-radius: 20px;
+}
+
+.center {
+    text-align: center;
+    font-size: 32px;
+}
+
+.graph-container {
+    border: 2px solid black;
+    border-color: lightgrey;
+    border-radius: 20px;
+    height: 600px;
+}
+
+.buying-power-container {
+    font-size: 32px;
+}
+
+.assets-title {
+    font-size: 32px;
+}
+
+.asset-table {
+    width: 90%;
+    height: 100%;
+}
+
+th {
+    text-align: left;
+}
+
+.assets-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 2px solid black;
+    border-color: lightgrey;
+    border-radius: 20px;
+    padding-top: 10px;
+    padding-bottom: 20px;
+}
+
+.table-container {
+    display: flex;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.market-cap-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.trade-btn {
+    font-size: 20px;
+    background-color: orange;
+    padding: 4px;
+}
