@@ -1,28 +1,19 @@
 ---
-import AdminDashboard from '../components/react/AdminDashboard.jsx';
-import Layout from '../components/layout.astro';
+import AdminDashboard from "../components/react/AdminDashboard.jsx";
+import Layout from "../components/layout.astro";
 
 let user = null;
 
 if (Astro.locals.pb.authStore.isValid) {
     user = Astro.locals.pb.authStore.model;
 }
-else {
-          return new Response(null, {
-    status: 401,
-    statusText: 'Unauthorized'
-  });
+
+if (!user?.isAdmin) {
+    return Astro.redirect("/users");
 }
-if (!user.isAdmin) {
-      return new Response(null, {
-    status: 403,
-    statusText: 'Forbidden'
-  });
-} 
 
 const users = await Astro.locals.pb.collection("users").getFullList();
 const coins = await Astro.locals.pb.collection("DashboardCoins").getFullList();
-
 ---
 
 <html>
@@ -31,8 +22,7 @@ const coins = await Astro.locals.pb.collection("DashboardCoins").getFullList();
     </head>
     <body>
         <Layout>
-            <AdminDashboard client:load users={users} coins={coins}/>
+            <AdminDashboard client:load users={users} coins={coins} />
         </Layout>
     </body>
 </html>
-
