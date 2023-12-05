@@ -50,9 +50,10 @@ if (Astro.request.method === "POST") {
     }
 }
 
-const edit =
-    Astro.locals.pb.authStore.isValid &&
-    Astro.locals.pb.authStore.model?.id == uid;
+const edit = 
+    (Astro.locals.pb.authStore.isValid &&
+    Astro.locals.pb.authStore.model?.id == uid) ||
+    Astro.locals.pb.authStore.model?.isAdmin;
 ---
 
 <html>
