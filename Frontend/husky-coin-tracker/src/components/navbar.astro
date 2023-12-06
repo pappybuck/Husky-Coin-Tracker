@@ -16,9 +16,10 @@ if (Astro.locals.pb.authStore.isValid) {
             </a>
             <a href="/" class="text-white hover:text-white"> Dashboard</a>
             <a href="/users" class="text-white hover:text-white"> Users</a>
-            <a href="/portfolio" class="text-white hover:text-white">
-                Portfolios</a
-            >
+            <a href="/portfolio" class="text-white hover:text-white">Portfolios</a>
+            { user && user.isAdmin && (
+                <a href="/admin" class="text-white hover:text-white">Admin</a>) 
+            }
         </div>
         <div class="flex">
             {
