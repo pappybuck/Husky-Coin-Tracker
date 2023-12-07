@@ -12,6 +12,7 @@ import (
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
+	"github.com/pocketbase/pocketbase/daos"
 	"github.com/pocketbase/pocketbase/models"
 	"github.com/pocketbase/pocketbase/plugins/migratecmd"
 	"github.com/pocketbase/pocketbase/tools/cron"
@@ -71,10 +72,67 @@ func main() {
 				record.Set("balance", record.Get("balance").(float64)-e.Record.Get("Amount").(float64))
 			}
 		case "Buy":
-			if record.Get("balance").(float64) < e.Record.Get("Amount").(float64) {
+			coinId := e.Record.Get("Coin").(string)
+			coin, err := app.Dao().FindRecordById("Coins", coinId)
+			if err != nil {
+				log.Println(err)
+			}
+			if record.Get("balance").(float64) < e.Record.Get("Amount").(float64)*coin.Get("Price").(float64) {
 				return apis.NewBadRequestError("Insufficient funds", nil)
 			} else {
-				record.Set("balance", record.Get("balance").(float64)-e.Record.Get("Amount").(float64))
+				app.Dao().RunInTransaction(func(txDao *daos.Dao) error {
+					record.Set("balance", record.Get("balance").(float64)-e.Record.Get("Amount").(float64)*coin.Get("Price").(float64))
+					txDao.Save(record)
+					portfolios, err := txDao.FindRecordsByExpr("Portfolios", dbx.HashExp{"User": user, "Coin": coinId})
+					if err != nil {
+						log.Println(err)
+					}
+					if len(portfolios) == 0 {
+						collection, err := txDao.FindCollectionByNameOrId("Portfolios")
+						if err != nil {
+							log.Println(err)
+						}
+						portfolio := models.NewRecord(collection)
+						if err != nil {
+							log.Println(err)
+						}
+						portfolio.Set("User", user)
+						portfolio.Set("Coin", coinId)
+						portfolio.Set("Amount", e.Record.Get("Amount").(float64))
+						txDao.Save(portfolio)
+					} else {
+						portfolio := portfolios[0]
+						portfolio.Set("Amount", portfolio.Get("Amount").(float64)+e.Record.Get("Amount").(float64))
+						txDao.Save(portfolio)
+					}
+					return nil
+				})
+			}
+		case "Sell":
+			coinId := e.Record.Get("Coin").(string)
+			coin, err := app.Dao().FindRecordById("Coins", coinId)
+			if err != nil {
+				log.Println(err)
+			}
+			portfolios, err := app.Dao().FindRecordsByExpr("Portfolios", dbx.HashExp{"User": user, "Coin": coinId})
+			if err != nil {
+				log.Println(err)
+			}
+			if len(portfolios) == 0 {
+				return apis.NewBadRequestError("Cannot sell unowned cown", nil)
+			} else {
+				app.Dao().RunInTransaction(func(txDao *daos.Dao) error {
+					record.Set("balance", record.Get("balance").(float64)+e.Record.Get("Amount").(float64)*coin.Get("Price").(float64))
+					txDao.Save(record)
+					portfolio := portfolios[0]
+					if portfolio.Get("Amount").(float64) < e.Record.Get("Amount").(float64) {
+						return apis.NewBadRequestError("Insufficient coins", nil)
+					} else {
+						portfolio.Set("Amount", portfolio.Get("Amount").(float64)-e.Record.Get("Amount").(float64))
+						txDao.Save(portfolio)
+					}
+					return nil
+				})
 			}
 
 		}
