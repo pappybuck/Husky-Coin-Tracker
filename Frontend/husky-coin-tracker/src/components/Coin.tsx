@@ -38,7 +38,7 @@ export default function Coin(coin: any) {
                     <nav aria-label="Breadcrumb" class="p-6">
                         <ol class="flex leading-none divide-x divide-red-400">
                             <li class="pr-4">
-                                <a href="/users" class="text-red-500 hover:text-red-600">
+                                <a href="/" class="text-red-500 hover:text-red-600">
                                     Coins
                                 </a>
                             </li>
