@@ -9,7 +9,7 @@ import (
 )
 
 func startup(app *pocketbase.PocketBase) {
-	collection, err := app.Dao().FindCollectionByNameOrId("DashboardCoins")
+	collection, err := app.Dao().FindCollectionByNameOrId("Coins")
 	if err != nil {
 		log.Println(err)
 	}

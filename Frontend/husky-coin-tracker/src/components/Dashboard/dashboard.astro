@@ -14,7 +14,7 @@ export type Coin = {
 
 let coins : Coin[] = [];
 
-let resp = await Astro.locals.pb.collection('DashboardCoins').getFullList();
+let resp = await Astro.locals.pb.collection('Coins').getFullList();
 
 for (let i = 0; i < resp.length; i++) {
     let coin = resp[i];
