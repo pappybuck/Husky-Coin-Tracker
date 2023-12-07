@@ -2,7 +2,6 @@
 const hostname = import.meta.env.PUBLIC_POCKETBASE_HOST;
 
 let user = null;
-let balance = null;
 
 if (Astro.locals.pb.authStore.isValid) {
     user = Astro.locals.pb.authStore.model;
