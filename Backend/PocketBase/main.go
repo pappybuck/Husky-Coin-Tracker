@@ -79,6 +79,8 @@ func main() {
 			}
 			if record.Get("balance").(float64) < e.Record.Get("Amount").(float64)*coin.Get("Price").(float64) {
 				return apis.NewBadRequestError("Insufficient funds", nil)
+			} else if e.Record.Get("Amount").(float64) <= 0 {
+				return apis.NewBadRequestError("Amount must be greater than 0", nil)
 			} else {
 				app.Dao().RunInTransaction(func(txDao *daos.Dao) error {
 					record.Set("balance", record.Get("balance").(float64)-e.Record.Get("Amount").(float64)*coin.Get("Price").(float64))
@@ -120,6 +122,8 @@ func main() {
 			}
 			if len(portfolios) == 0 {
 				return apis.NewBadRequestError("Cannot sell unowned cown", nil)
+			} else if e.Record.Get("Amount").(float64) <= 0 {
+				return apis.NewBadRequestError("Amount must be greater than 0", nil)
 			} else {
 				return app.Dao().RunInTransaction(func(txDao *daos.Dao) error {
 					portfolio := portfolios[0]
