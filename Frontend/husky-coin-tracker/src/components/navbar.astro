@@ -6,11 +6,6 @@ let balance = null;
 
 if (Astro.locals.pb.authStore.isValid) {
     user = Astro.locals.pb.authStore.model;
-    const balances = await Astro.locals.pb.collection("Balances").getFullList();
-    if (balances.length > 0) {
-        balance = balances[0].Balance;
-    }
-    console.log(balance);
 }
 ---
 
@@ -22,9 +17,15 @@ if (Astro.locals.pb.authStore.isValid) {
             </a>
             <a href="/" class="text-white hover:text-white"> Dashboard</a>
             <a href="/users" class="text-white hover:text-white"> Users</a>
-            <a href="/portfolio" class="text-white hover:text-white">Portfolios</a>
-            { user && user.isAdmin && (
-                <a href="/admin" class="text-white hover:text-white">Admin</a>) 
+            <a href="/portfolio" class="text-white hover:text-white"
+                >Portfolios</a
+            >
+            {
+                user && user.isAdmin && (
+                    <a href="/admin" class="text-white hover:text-white">
+                        Admin
+                    </a>
+                )
             }
         </div>
         <div class="flex">
@@ -50,11 +51,8 @@ if (Astro.locals.pb.authStore.isValid) {
                                 href={`/users/${user.id}`}
                                 class="text-white hover:text-white"
                             >
-                                {user.name}
+                                Balance: ${user.balance}
                             </a>
-                            <div class="text-white">
-                                Balance: ${balance}   
-                            </div>
                             <a
                                 href={`/logout`}
                                 class="text-white hover:text-white text-sm"

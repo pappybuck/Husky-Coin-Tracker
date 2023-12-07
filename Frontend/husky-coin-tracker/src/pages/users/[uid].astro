@@ -9,11 +9,7 @@ const { uid } = Astro.params;
 let user = null;
 
 if (uid) {
-    try {
-        user = await Astro.locals.pb.collection("users").getOne(uid);
-    } catch (error) {
-        // ignore
-    }
+    user = await Astro.locals.pb.collection("users").getOne(uid);
 }
 
 if (!user) {
