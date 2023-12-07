@@ -10,6 +10,7 @@ import (
 
 	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase"
+	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/forms"
 	"github.com/pocketbase/pocketbase/models"
@@ -74,7 +75,7 @@ func main() {
 
 	})
 
-	app.OnRecordAfterCreateRequest("Transactions").Add(func(e *core.RecordCreateEvent) error {
+	app.OnRecordBeforeCreateRequest("Transactions").Add(func(e *core.RecordCreateEvent) error {
 
 		user := e.Record.Get("User").(string)
 
@@ -89,7 +90,7 @@ func main() {
 				record.Set("Balance", record.Get("Balance").(float64)+e.Record.Get("Amount").(float64))
 			case "Withdraw":
 				if record.Get("Balance").(float64) < e.Record.Get("Amount").(float64) {
-					return nil
+					return apis.NewBadRequestError("Insufficient funds", nil)
 				} else {
 					record.Set("Balance", record.Get("Balance").(float64)-e.Record.Get("Amount").(float64))
 				}
