@@ -2,91 +2,8 @@
 import Layout from "../../components/layout.astro";
 import Coin from "../../components/Coin";
 
-async function handleRequest(user: any, coin: any, type: any, amount: any) {
-    if (!user || !coin || !type || !amount) {
-        console.log("A parameter is missing!");
-        return;
-    }
-
-    if (amount == "0") {
-        console.log("Amount can't be zero!");
-        return;
-    }
-
-    if (type == "BUY") {
-        await handleBuyRequest(user, coin, amount);
-    } else if (type == "SELL") {
-        await handleSellRequest(user, coin, amount);
-    } else {
-        console.log("Unhandled request type...");
-    }
-}
-
-async function handleBuyRequest(user: any, coin: any, amount: any) {
-    const entry = await findEntry(user, coin);
-    const numAmount = parseInt(amount);
-
-    // not enough in balance
-    if (coin.Price * numAmount > user.balance) {
-        console.log("Don't have enough cash to buy!");
-        return;
-    }
-
-    if (!entry) {
-        await Astro.locals.pb.collection("Portfolios").create({
-            User: user.id,
-            Coin: coin.id,
-            Amount: numAmount,
-        });
-    } else {
-        await Astro.locals.pb.collection("Portfolios").update(entry.id, {
-            Amount: entry.Amount + numAmount,
-        });
-    }
-
-    await Astro.locals.pb.collection("Transactions").create({
-        User: user.id,
-        Type: "Buy",
-        Amount: amount,
-        Coin: coin.id,
-    });
-}
-
-async function handleSellRequest(user: any, coin: any, amount: any) {
-    const entry = await findEntry(user, coin);
-    const numAmount = parseInt(amount);
-
-    // dont have enough coin amount
-    if (!entry || entry.Amount < numAmount) {
-        console.log("Not enough coins to sell!");
-        return;
-    }
-
-    await Astro.locals.pb.collection("Portfolios").update(entry.id, {
-        Amount: entry.Amount - numAmount,
-    });
-
-    await Astro.locals.pb.collection("Transactions").create({
-        User: user.id,
-        Type: "Sell",
-        Amount: amount,
-        Coin: coin.id,
-    });
-}
-
-async function findEntry(user: any, coin: any) {
-    const portfolioList = await Astro.locals.pb
-        .collection("Portfolios")
-        .getList(1, 1, {
-            filter: `Coin.CoinId = '${coin.CoinId}' && User.id = '${user.id}'`,
-        });
-    if (portfolioList) {
-        return portfolioList.items[0];
-    }
-    return null;
-}
-
 const { cid } = Astro.params;
+const user = Astro.locals.pb.authStore.model;
 
 let coin = null;
 
@@ -104,15 +21,59 @@ if (!coin) {
     return Astro.redirect("/");
 }
 
+let entry: any = null;
+
+const portfolioList = await Astro.locals.pb
+    .collection("Portfolios")
+    .getList(1, 1, {
+        filter: `Coin.CoinId = '${coin.CoinId}' && User.id = '${user?.id}'`,
+    });
+
+if (portfolioList) {
+    entry = portfolioList.items[0];
+}
+
+async function handleRequest(user: any, coin: any, type: any, amount: any) {
+    if (!user || !coin || !type || !amount) {
+        console.log("A parameter is missing!");
+        return;
+    }
+    
+    if (type == "BUY") {
+        try {
+            await Astro.locals.pb.collection("Transactions").create({
+                User: user.id,
+                Type: "Buy",
+                Amount: parseInt(amount),
+                Coin: coin.id,
+            });
+        } catch (error) {
+            console.log(`Buy error: ${error}`);
+        }
+    } else if (type == "SELL") {
+        try {
+            await Astro.locals.pb.collection("Transactions").create({
+                User: user.id,
+                Type: "Sell",
+                Amount: parseInt(amount),
+                Coin: coin.id,
+            });
+        } catch (error) {
+            console.log(`Sell error: ${error}`);
+        }
+    } else {
+        console.log("Unhandled request type...");
+    }
+}
+
 if (Astro.request.method === "POST") {
     console.log("Post triggered!");
-    const user = Astro.locals.pb.authStore.model;
     const data = await Astro.request.formData();
     await handleRequest(user, coin, data.get("type"), data.get("amount"));
     return Astro.redirect(`/coins/${cid}`);
 }
 
-const edit = Astro.locals.pb.authStore.isValid;
+const loggedIn = Astro.locals.pb.authStore.isValid;
 ---
 
 <html>
@@ -127,51 +88,56 @@ const edit = Astro.locals.pb.authStore.isValid;
                 </div>
                 <div class="w-1/4 p-6 flex items-center">
                     {
-                        edit ? (
-                            <form
-                                method="POST"
-                                class="space-y-8"
-                                accept-charset="UTF-8"
-                                enctype="multipart/form-data"
-                            >
-                                <div>
-                                    <label
-                                        for="amount"
-                                        class="block text-sm font-medium text-gray-700"
-                                    >
-                                        Amount:
-                                    </label>
-                                    <input
-                                        name="amount"
-                                        type="number"
-                                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
-                                        value={0}
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <label
-                                        for="type"
-                                        class="block text-sm font-medium text-gray-700"
-                                    >
-                                        Transaction Type:
-                                    </label>
-                                    <select
-                                        name="type"
-                                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
-                                        required
-                                    >
-                                        <option value="BUY">Buy</option>
-                                        <option value="SELL">Sell</option>
-                                    </select>
-                                </div>
-                                <button
-                                    type="submit"
-                                    class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                        loggedIn ? (
+                            <>
+                                <form
+                                    method="POST"
+                                    class="space-y-8"
+                                    accept-charset="UTF-8"
+                                    enctype="multipart/form-data"
                                 >
-                                    Save Profile
-                                </button>
-                            </form>
+                                    <p class="">
+                                        Amount Owned: {entry ? entry.Amount : 0}
+                                    </p>
+                                    <div>
+                                        <label
+                                            for="amount"
+                                            class="block text-sm font-medium text-gray-700"
+                                        >
+                                            Amount:
+                                        </label>
+                                        <input
+                                            name="amount"
+                                            type="number"
+                                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                                            value={0}
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label
+                                            for="type"
+                                            class="block text-sm font-medium text-gray-700"
+                                        >
+                                            Transaction Type:
+                                        </label>
+                                        <select
+                                            name="type"
+                                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                                            required
+                                        >
+                                            <option value="BUY">Buy</option>
+                                            <option value="SELL">Sell</option>
+                                        </select>
+                                    </div>
+                                    <button
+                                        type="submit"
+                                        class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                    >
+                                        Save Profile
+                                    </button>
+                                </form>
+                            </>
                         ) : (
                             ""
                         )
