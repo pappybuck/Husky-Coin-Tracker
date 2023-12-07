@@ -92,7 +92,7 @@ let coin = null;
 
 if (cid) {
     const coinList = await Astro.locals.pb
-        .collection("DashboardCoins")
+        .collection("Coins")
         .getList(1, 1, { filter: `CoinId = '${cid}'` });
 
     if (coinList) {

@@ -13,7 +13,7 @@ if (!user?.isAdmin) {
 }
 
 const users = await Astro.locals.pb.collection("users").getFullList();
-const coins = await Astro.locals.pb.collection("DashboardCoins").getFullList();
+const coins = await Astro.locals.pb.collection("Coins").getFullList();
 ---
 
 <html>
