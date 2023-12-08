@@ -41,16 +41,16 @@ export default function DashboardTable( {coins} : {coins: Coin[]} ) {
     
 
     return (
-        <>
-            <div class="pb-4 bg-white dark:bg-gray-900">
+        <div>
+            <div class="pb-4 bg-white">
                 <label for="table-search" class="sr-only">Search</label>
                 <div class="relative mt-1">
                     <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
-                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                         </svg>
                     </div>
-                    <input type="text" id="table-search" class="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for items"
+                    <input type="text" id="table-search" class="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Search for items"
                         onInput={(e) => {
                             setSearch(e.currentTarget.value);
                             filterCoinList(
@@ -66,8 +66,8 @@ export default function DashboardTable( {coins} : {coins: Coin[]} ) {
                     />
                 </div>
             </div>
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
             <tr>
                 <th scope="col" class="px-6 py-3">
                     <div class="flex items-center">
@@ -122,8 +122,8 @@ export default function DashboardTable( {coins} : {coins: Coin[]} ) {
         <tbody>
             <For each={coinList.coinList}>
                 {(coin) => (
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    <tr class="bg-white border-b">
+                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                     <a href={`/coins/${coin.id}`}>
                         <div class="flex items-center">
                             <img
@@ -131,7 +131,7 @@ export default function DashboardTable( {coins} : {coins: Coin[]} ) {
                                 alt="Icon Picture"
                                 class="rounded-full w-10 h-10 mr-2"
                             />
-                            {coin.name} <span class="text-gray-400 dark:text-gray-300">({coin.symbol})</span>
+                            {coin.name} <span class="text-gray-400">({coin.symbol})</span>
                         </div>
                     </a>
                     </th>
@@ -204,7 +204,7 @@ export default function DashboardTable( {coins} : {coins: Coin[]} ) {
             
             </tbody>
     </table>
-        </>
+        </div>
     )
 
 
