@@ -73,7 +73,7 @@ const UserSearch = (props: any) => {
                                         src={
                                             user.avatar
                                                 ? `${hostname}/api/files/_pb_users_auth_/${user.id}/${user.avatar}?token=`
-                                                : "default_pfp.jpeg"
+                                                : "/misc/default_pfp.jpeg"
                                         }
                                         alt="Profile Picture"
                                         class="h-12 w-12 rounded-full object-cover border border-red-600"

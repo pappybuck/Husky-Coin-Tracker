@@ -17,12 +17,11 @@ function numberWithCommas(x: number) {
 }
 
 // TODO: make coin take in a coin name/ticker 
-export default function Coin(coin: any) {
-
+export default function Coin(props: any) {
     const [coinData, setCoinData] = createSignal<number[][]>([])
 
     onMount(async () => {
-        let data = await getCoinData(coin.coin.CoinId)
+        let data = await getCoinData(props.coin.CoinId)
         let prices = data.prices
         setCoinData(prices)
     })
@@ -43,27 +42,31 @@ export default function Coin(coin: any) {
                                 </a>
                             </li>
                             <li class="px-4 text-black" aria-current="page">
-                                {sentenceCase(coin.coin.CoinId)}
+                                {sentenceCase(props.coin.CoinId)}
                             </li>
                         </ol>
                     </nav>
 
-                    {/* <div class="columns-2"> */}
-
                     <div class="">
-
-
                         <span>
-                            <span class=""
-                                style="width: 219px; height: 76px; color: black; font-size: 40px; font-family: Poppins; font-weight: 500; word-wrap: break-word">
-                                {sentenceCase(coin.coin.CoinId)}
-                            </span>
-                            <span class="ml-2"
-                                style="opacity: 0.30; color: black; font-size: 15px; font-family: Poppins; font-weight: 500;">{coin.coin.Symbol}</span>
-
-                            <br />
+                            <div class="flex">
+                                <img
+                                    src={`/icons/${props.coin.Symbol}.svg`}
+                                    alt="Icon Picture"
+                                    class="rounded-full w-10 h-10 mr-2"
+                                />
+                                <div>
+                                    <span class=""
+                                        style="width: 219px; height: 76px; color: black; font-size: 40px; font-family: Poppins; font-weight: 500; word-wrap: break-word">
+                                        {sentenceCase(props.coin.CoinId)}
+                                    </span>
+                                    <span class="ml-2"
+                                        style="opacity: 0.30; color: black; font-size: 15px; font-family: Poppins; font-weight: 500;">{props.coin.Symbol}
+                                    </span>
+                                </div>
+                            </div>
                             <span style="width: 219px; height: 76px; color: black; font-size: 40px; font-family: Poppins; font-weight: 500; word-wrap: break-word">
-                                ${numberWithCommas(coin.coin.Price)}
+                                ${numberWithCommas(props.coin.Price)}
                             </span>
 
                             <span class="ml-3" style="color: #12A318; font-size: 15px; font-family: Poppins; font-weight: 500; word-wrap: break-word"></span>
@@ -71,11 +74,10 @@ export default function Coin(coin: any) {
                                 <div style="left: 0px; top: 0px; position: absolute; opacity: 0.60; color: black; font-size: 16px; font-family: Poppins; font-weight: 500; word-wrap: break-word">Market Cap </div>
                                 <div style="left: 0px; top: 60px; position: absolute; opacity: 0.60; color: black; font-size: 16px; font-family: Poppins; font-weight: 500; word-wrap: break-word">24 Hour Trading Volume</div>
                                 <div style="width: 461px; height: 0px; left: 0px; top: 30px; position: absolute; opacity: 0.10; border: 1px black solid"></div>
-                                <div style="left: 295px; top: 0px; position: absolute; opacity: 0.60; color: black; font-size: 16px; font-family: Poppins; font-weight: 500; word-wrap: break-word">{numberWithCommas(coin.coin.Marketcap)}</div>
+                                <div style="left: 295px; top: 0px; position: absolute; opacity: 0.60; color: black; font-size: 16px; font-family: Poppins; font-weight: 500; word-wrap: break-word">{numberWithCommas(props.coin.Marketcap)}</div>
                                 <div style="width: 461px; height: 0px; left: 0px; top: 100px; position: absolute; opacity: 0.10; border: 1px black solid"></div>
                                 <div style="left: 295px; top: 70px; position: absolute; opacity: 0.60; color: black; font-size: 16px; font-family: Poppins; font-weight: 500; word-wrap: break-word">$6,646,952,699</div>
                             </div>
-
                         </span>
 
                         {/* </div> */}

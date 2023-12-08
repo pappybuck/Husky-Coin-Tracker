@@ -125,7 +125,14 @@ export default function DashboardTable( {coins} : {coins: Coin[]} ) {
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     <a href={`/coins/${coin.id}`}>
-                        {coin.name} <span class="text-gray-400 dark:text-gray-300">({coin.symbol})</span>
+                        <div class="flex items-center">
+                            <img
+                                src={`/icons/${coin.symbol}.svg`}
+                                alt="Icon Picture"
+                                class="rounded-full w-10 h-10 mr-2"
+                            />
+                            {coin.name} <span class="text-gray-400 dark:text-gray-300">({coin.symbol})</span>
+                        </div>
                     </a>
                     </th>
                     <td class="px-6 py-4 text-black">
