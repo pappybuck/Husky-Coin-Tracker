@@ -50,7 +50,7 @@ if (Astro.locals.pb.authStore.isValid) {
                                 href={`/users/${user.id}`}
                                 class="text-white hover:text-white"
                             >
-                                Balance: ${user.balance}
+                                Balance: { `$${(Math.floor(user.balance * 100) / 100).toFixed(2)}` }
                             </a>
                             <a
                                 href={`/logout`}
