@@ -48,7 +48,7 @@ const UserSearch = (props: any) => {
                             id="search"
                             type="text"
                             class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
-                            placeholder="Enter a name..."
+                            placeholder="Search for users..."
                             value={searchTerm()}
                             onInput={(e) => setSearchTerm(e.currentTarget.value)}
                         />
