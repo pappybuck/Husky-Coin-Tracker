@@ -8,9 +8,15 @@ if (Astro.locals.pb.authStore.isValid) {
     user = Astro.locals.pb.authStore.model;
 }
 
-const portfolios = await Astro.locals.pb.collection("Portfolios").getFullList();
+const portfolio = await Astro.locals.pb
+    .collection("Portfolios")
+    .getList(1, 1, {
+        filter: `User.id = '${user?.id}'`,
+});
 
 const transactions = await Astro.locals.pb.collection("Transactions").getFullList();
+
+console.log(transactions);
 
 async function handleRequest(user: any, coin: any, type: any, amount: any) {
     if (!user || !coin || !type || !amount) {
@@ -25,7 +31,7 @@ async function handleRequest(user: any, coin: any, type: any, amount: any) {
                 User: user.id,
                 Type: "Deposit",
                 Amount: parseInt(amount),
-                Coin: coin.id,
+                Coin: "",
             });
         } catch (error) {
             console.log(`Buy error: ${error}`);
@@ -36,7 +42,7 @@ async function handleRequest(user: any, coin: any, type: any, amount: any) {
                 User: user.id,
                 Type: "Withdraw",
                 Amount: parseInt(amount),
-                Coin: coin.id,
+                Coin: "",
             });
         } catch (error) {
             console.log(`Sell error: ${error}`);
@@ -50,8 +56,7 @@ if (Astro.request.method === "POST") {
     console.log("Post triggered!");
     const data = await Astro.request.formData();
     await handleRequest(user, data.get("type"), data.get("type"), data.get("amount"));
-    transactions = await Astro.locals.pb.collection("Transactions").getFullList();
-    console.log(transactions);
+    return Astro.redirect(`/portfolio`);
 }
 ---
 
@@ -69,7 +74,7 @@ if (Astro.request.method === "POST") {
     </head>
     <body>
         <Layout>
-            <Portfolio client:load user={user} portfolios={portfolios} transactions={transactions}/>
+            <Portfolio client:load user={user} portfolio={portfolio} transactions={transactions}/>
             <h1 class="mt-3">Deposit/Withdraw</h1>
             <form
                 method="POST"

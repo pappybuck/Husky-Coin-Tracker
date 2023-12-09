@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./Portfolio.css"
 
-function Portfolio({ user, portfolios }) {
+function Portfolio({ user, portfolio, transactions }) {
     const exampleAssets = [{name: "Bitcoin", price: 24500, change: 22.1, marketCap: "22.4B"}, {name: "Ethereum", price: 15000, change: -14.2, marketCap: "5.4B"}]
 
-    const [totalBalance, setTotalBalance] = useState(user?.balance);
+    const [totalBalance, setTotalBalance] = useState(Math.round((user?.balance + Number.EPSILON) * 100) / 100);
     const [totalInvested, setTotalInvested] = useState(200);
     const [totalReturn, setTotalReturn] = useState(-150);
     const [dayReturn, setDayReturn] = useState(100);
@@ -14,8 +14,9 @@ function Portfolio({ user, portfolios }) {
     const [assets, setAssets] = useState(exampleAssets);
 
     console.log("User:", user);
-    console.log("Portfolios", portfolios);
+    console.log("Portfolios", portfolio);
     console.log("User balance:", user?.balance);
+    console.log("Transactions:", transactions)
 
     return (
         <div className="portfolio-page-container mt-10">
