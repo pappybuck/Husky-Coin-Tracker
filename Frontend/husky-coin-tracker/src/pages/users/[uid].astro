@@ -46,9 +46,15 @@ if (Astro.request.method === "POST") {
     }
 }
 
-const edit = 
+const coins = await Promise.all(
+    user.watchlist.map((id: string) => {
+        return Astro.locals.pb.collection("Coins").getOne(id);
+    }),
+);
+
+const edit =
     (Astro.locals.pb.authStore.isValid &&
-    Astro.locals.pb.authStore.model?.id == uid) ||
+        Astro.locals.pb.authStore.model?.id == uid) ||
     Astro.locals.pb.authStore.model?.isAdmin;
 ---
 
@@ -77,21 +83,44 @@ const edit =
 
                 <div class="flex">
                     <div class="w-1/4 p-6 flex flex-col items-center">
-                        <img
-                            src={user.avatar
-                                ? `${hostname}/api/files/_pb_users_auth_/${user.id}/${user.avatar}?token=`
-                                : "/misc/default_pfp.jpeg"}
-                            alt="Profile Picture"
-                            class="w-96 h-96 rounded-full object-cover border-4 border-red-600"
-                        />
                         <label
-                            for="name"
-                            class="block text-sm font-medium text-gray-700"
+                            class="block text-sm font-medium text-gray-700 mb-2"
                         >
                             Joined {
                                 format(new Date(user.created), "MMMM d, yyyy")
                             }
                         </label>
+                        <img
+                            src={user.avatar
+                                ? `${hostname}/api/files/_pb_users_auth_/${user.id}/${user.avatar}?token=`
+                                : "/misc/default_pfp.jpeg"}
+                            alt="Profile Picture"
+                            class="w-96 h-96 rounded-full object-cover border-4 border-red-600 mb-2"
+                        />
+                        <label
+                            class="block text-sm font-medium text-gray-700 mb-2"
+                        >
+                            Coin Watchlist
+                        </label>
+                        {
+                            coins.length > 0 ? (
+                                <div class="flex">
+                                    {coins.map((coin: any, _: any) => (
+                                        <a href={`/coins/${coin.CoinId}`}>
+                                            <img
+                                                src={`/icons/${coin.Symbol}.svg`}
+                                                alt="Icon Picture"
+                                                class="rounded-full w-10 h-10 mr-2"
+                                            />
+                                        </a>
+                                    ))}
+                                </div>
+                            ) : (
+                                <label class="block text-xs font-medium text-gray-700 mb-2">
+                                    None
+                                </label>
+                            )
+                        }
                     </div>
 
                     <div class="w-3/4 p-6">
