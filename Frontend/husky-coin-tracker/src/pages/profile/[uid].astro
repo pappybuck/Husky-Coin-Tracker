@@ -13,7 +13,7 @@ if (uid) {
 }
 
 if (!user) {
-    return Astro.redirect("/users");
+    return Astro.redirect("/search");
 }
 
 if (Astro.request.method === "POST") {
@@ -40,7 +40,7 @@ if (Astro.request.method === "POST") {
 
         await Astro.locals.pb.collection("users").update(user.id, postData);
 
-        return Astro.redirect(`/users/${user.id}`);
+        return Astro.redirect(`/profile/${user.id}`);
     } catch (error) {
         console.error(error);
     }
@@ -69,7 +69,7 @@ const edit =
                     <ol class="flex leading-none divide-x divide-red-400">
                         <li class="pr-4">
                             <a
-                                href="/users"
+                                href="/profile"
                                 class="text-red-500 hover:text-red-600"
                             >
                                 Users
