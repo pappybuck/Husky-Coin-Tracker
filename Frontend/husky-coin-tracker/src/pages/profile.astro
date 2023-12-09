@@ -13,30 +13,30 @@ if (!user) {
 }
 
 if (Astro.request.method === "POST") {
+    const data = await Astro.request.formData();
+    const actionType = data.get("action");
+
     try {
-        const data = await Astro.request.formData();
-
-        const postData: any = {};
-
-        if (data.get("name")) {
-            postData.name = data.get("name");
+        if (actionType === "delete-profile") {
+            await Astro.locals.pb.collection('users').delete(user.id);
+            return Astro.redirect(`/`);
+        } else if (actionType === "save-profile") {
+            const postData: any = {};
+            if (data.get("name")) {
+                postData.name = data.get("name");
+            }
+            if (data.get("bio")) {
+                postData.bio = data.get("bio");
+            }
+            if (data.get("location")) {
+                postData.location = data.get("location");
+            }
+            if (data.get("avatar") && (data.get("avatar") as File).size > 0) {
+                postData.avatar = data.get("avatar");
+            }
+            await Astro.locals.pb.collection("users").update(user.id, postData);
+            return Astro.redirect(`/profile`);
         }
-
-        if (data.get("bio")) {
-            postData.bio = data.get("bio");
-        }
-
-        if (data.get("location")) {
-            postData.location = data.get("location");
-        }
-
-        if (data.get("avatar") && (data.get("avatar") as File).size > 0) {
-            postData.avatar = data.get("avatar");
-        }
-
-        await Astro.locals.pb.collection("users").update(user.id, postData);
-
-        return Astro.redirect(`/profile`);
     } catch (error) {
         console.error(error);
     }
@@ -119,10 +119,15 @@ const edit = true;
                     <div class="w-3/4 p-6">
                         <form
                             method="POST"
-                            class="space-y-8"
+                            class="space-y-8 mb-4"
                             accept-charset="UTF-8"
                             enctype="multipart/form-data"
                         >
+                            <input
+                                type="hidden"
+                                name="action"
+                                value="save-profile"
+                            />
                             <div>
                                 <label
                                     for="name"
@@ -252,6 +257,29 @@ const edit = true;
                                 )
                             }
                         </form>
+                        {
+                            edit ? (
+                                <form
+                                    method="POST"
+                                    class="subscription-form"
+                                    accept-charset="UTF-8"
+                                >
+                                    <input
+                                        type="hidden"
+                                        name="action"
+                                        value="delete-profile"
+                                    />
+                                    <button
+                                        type="submit"
+                                        class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                    >
+                                        Delete Profile
+                                    </button>
+                                </form>
+                            ) : (
+                                ""
+                            )
+                        }
                     </div>
                 </div>
             </div>
