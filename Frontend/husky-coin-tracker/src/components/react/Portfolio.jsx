@@ -1,11 +1,10 @@
 import { useState } from "react";
 import "./Portfolio.css"
 
-function Portfolio() {
+function Portfolio({ user, portfolios }) {
     const exampleAssets = [{name: "Bitcoin", price: 24500, change: 22.1, marketCap: "22.4B"}, {name: "Ethereum", price: 15000, change: -14.2, marketCap: "5.4B"}]
 
-
-    const [totalBalance, setTotalBalance] = useState(300);
+    const [totalBalance, setTotalBalance] = useState(user?.balance);
     const [totalInvested, setTotalInvested] = useState(200);
     const [totalReturn, setTotalReturn] = useState(-150);
     const [dayReturn, setDayReturn] = useState(100);
@@ -14,10 +13,14 @@ function Portfolio() {
 
     const [assets, setAssets] = useState(exampleAssets);
 
+    console.log("User:", user);
+    console.log("Portfolios", portfolios);
+    console.log("User balance:", user?.balance);
+
     return (
         <div className="portfolio-page-container mt-10">
             <div className="title">
-                User's Portfolio
+                {user?.name}'s Portfolio
             </div>
             <div className="statistic-boxes-container mt-5">
                 <div className="statistic-box">
@@ -40,8 +43,8 @@ function Portfolio() {
             <div className="graph-container mt-2">
                 Graph goes here
             </div>
-            <div className="buying-power-container mt-2">
-                Buying Power: ${buyingPower}
+            <div className="buying-power-container">
+                    Buying Power: ${buyingPower}
             </div>
             <div className="assets-container mt-10">
                 <div className="assets-title mx-2">Your Assets</div>

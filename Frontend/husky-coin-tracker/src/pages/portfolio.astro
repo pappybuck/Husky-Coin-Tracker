@@ -1,15 +1,120 @@
 ---
 import Portfolio from "../components/react/Portfolio";
 import Layout from "../components/layout.astro";
+
+let user = null;
+
+if (Astro.locals.pb.authStore.isValid) {
+    user = Astro.locals.pb.authStore.model;
+}
+
+const portfolios = await Astro.locals.pb.collection("Portfolios").getFullList();
+
+const transactions = await Astro.locals.pb.collection("Transactions").getFullList();
+
+async function handleRequest(user: any, coin: any, type: any, amount: any) {
+    if (!user || !coin || !type || !amount) {
+        console.log("A parameter is missing!");
+        return;
+    }
+    
+    if (type == "DEPOSIT") {
+        console.log("Test passed!");
+        try {
+            await Astro.locals.pb.collection("Transactions").create({
+                User: user.id,
+                Type: "Deposit",
+                Amount: parseInt(amount),
+                Coin: coin.id,
+            });
+        } catch (error) {
+            console.log(`Buy error: ${error}`);
+        }
+    } else if (type == "WITHDRAW") {
+        try {
+            await Astro.locals.pb.collection("Transactions").create({
+                User: user.id,
+                Type: "Withdraw",
+                Amount: parseInt(amount),
+                Coin: coin.id,
+            });
+        } catch (error) {
+            console.log(`Sell error: ${error}`);
+        }
+    } else {
+        console.log("Unhandled request type...");
+    }
+}
+
+if (Astro.request.method === "POST") {
+    console.log("Post triggered!");
+    const data = await Astro.request.formData();
+    await handleRequest(user, data.get("type"), data.get("type"), data.get("amount"));
+    transactions = await Astro.locals.pb.collection("Transactions").getFullList();
+    console.log(transactions);
+}
 ---
 
 <html>
     <head>
         <title>Portfolio Page</title>
+        <style>
+            .deposit-withdraw-form { padding-left: 15%;
+            padding-right: 15%; }
+
+            h1 { padding-left: 15%;
+            padding-right: 15%;
+            font-size: 32px;}
+        </style>
     </head>
     <body>
         <Layout>
-            <Portfolio client:load />
+            <Portfolio client:load user={user} portfolios={portfolios} transactions={transactions}/>
+            <h1 class="mt-3">Deposit/Withdraw</h1>
+            <form
+                method="POST"
+                class="space-y-4 deposit-withdraw-form mt-3"
+                accept-charset="UTF-8"
+                enctype="multipart/form-data"
+            >
+                <div>
+                    <label
+                        for="amount"
+                        class="block text-sm font-medium text-gray-700"
+                    >
+                        Amount:
+                    </label>
+                    <input
+                        name="amount"
+                        type="number"
+                        class="block w-85 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                        value={0}
+                        required
+                    />
+                </div>
+                <div>
+                    <label
+                        for="type"
+                        class="block text-sm font-medium text-gray-700"
+                    >
+                        Transaction Type:
+                    </label>
+                    <select
+                        name="type"
+                        class="block w-85 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                        required
+                    >
+                        <option value="DEPOSIT">Deposit</option>
+                        <option value="WITHDRAW">Withdraw</option>
+                    </select>
+                </div>
+                <button
+                    type="submit"
+                    class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                >
+                    Submit Transaction
+                </button>
+            </form>
         </Layout>
     </body>
 </html>
