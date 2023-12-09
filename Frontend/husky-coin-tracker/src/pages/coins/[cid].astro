@@ -1,6 +1,7 @@
 ---
 import Layout from "../../components/layout.astro";
 import Coin from "../../components/Coin";
+import _ from "lodash";
 
 const { cid } = Astro.params;
 const user = Astro.locals.pb.authStore.model;
@@ -85,29 +86,52 @@ if (Astro.request.method === "POST") {
                 });
             }
         }
-    } else if (actionType == "transaction") {
-        await handleRequest(user, coin, data.get("type"), data.get("amount"));
+    } else if (actionType == "buy_transaction") {
+        await handleRequest(user, coin, "BUY", data.get("amount"));
+    } else if (actionType == "sell_transaction") {
+        await handleRequest(user, coin, "SELL", data.get("amount"));
     }
     return Astro.redirect(`/coins/${cid}`);
 }
 
 const loggedIn = Astro.locals.pb.authStore.isValid;
+
+const total = entry ? entry.Amount : 0
 ---
 
 <html>
     <head>
         <title>Coin Page</title>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+        />
     </head>
     <body>
         <Layout>
             <div class="flex">
-                <div class="w-3/4 p-6 flex items-center">
+                <div class={!loggedIn ? "w-full flex-row" : "w-3/4 flex-row"}>
+                    <nav aria-label="Breadcrumb" class="p-6">
+                        <ol class="flex leading-none divide-x divide-red-400">
+                            <li class="pr-4">
+                                <a
+                                    href="/"
+                                    class="text-red-500 hover:text-red-600"
+                                >
+                                    Coins
+                                </a>
+                            </li>
+                            <li class="px-4 text-black" aria-current="page">
+                                {_.capitalize(coin.CoinId)}
+                            </li>
+                        </ol>
+                    </nav>
                     <Coin client:load coin={coin} />
                 </div>
-                <div class="w-1/4 p-6 flex flex-col">
-                    {
-                        loggedIn ? (
-                            <>
+                {
+                    loggedIn ? (
+                        <div class="w-1/4 flex flex-col">
+                            <div class="p-4 flex flex-col items-end">
                                 <form
                                     method="POST"
                                     class="subscription-form"
@@ -123,89 +147,99 @@ const loggedIn = Astro.locals.pb.authStore.isValid;
                                         class="bg-transparent border-none p-0"
                                     >
                                         {isWatched ? (
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                class="h-10 w-10"
-                                                fill="currentColor"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                                stroke-width="2"
-                                            >
-                                                <path d="M12 2l2.39 4.924 5.447.791-3.937 3.83.93 5.414-4.84-2.545-4.84 2.545.93-5.414-3.937-3.83 5.447-.791L12 2z" />
-                                            </svg>
+                                            <i
+                                                class="fa fa-star checked fa-2x"
+                                                style={{ color: "#ffa534" }}
+                                            />
                                         ) : (
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                class="h-10 w-10"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                                stroke-width="2"
-                                            >
-                                                <path d="M12 2l2.39 4.924 5.447.791-3.937 3.83.93 5.414-4.84-2.545-4.84 2.545.93-5.414-3.937-3.83 5.447-.791L12 2z" />
-                                            </svg>
+                                            <i
+                                                class="far fa-star fa-2x"
+                                                style={{ color: "#ffa534" }}
+                                            />
                                         )}
                                     </button>
                                 </form>
-
+                            </div>
+                            <div class="pr-6 pt-20">
+                                <p class="text-lg font-light text-gray-800 mb-12">
+                                    {_.capitalize(coin.CoinId)} Owned: {total}
+                                </p>
                                 <form
                                     method="POST"
-                                    class="space-y-8"
+                                    class="space-y-2 mb-12"
                                     accept-charset="UTF-8"
                                     enctype="multipart/form-data"
                                 >
                                     <input
                                         type="hidden"
                                         name="action"
-                                        value="transaction"
+                                        value="buy_transaction"
                                     />
-                                    <p class="">
-                                        Amount Owned: {entry ? entry.Amount : 0}
-                                    </p>
                                     <div>
                                         <label
                                             for="amount"
                                             class="block text-sm font-medium text-gray-700"
                                         >
-                                            Amount:
+                                            Buy Amount:
                                         </label>
                                         <input
                                             name="amount"
                                             type="number"
                                             class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
                                             value={0}
+                                            min="0"
+                                            max={user ? `${Math.floor(user.balance / coin.Price).toString()}` : "0"}
                                             required
                                         />
-                                    </div>
-                                    <div>
-                                        <label
-                                            for="type"
-                                            class="block text-sm font-medium text-gray-700"
-                                        >
-                                            Transaction Type:
-                                        </label>
-                                        <select
-                                            name="type"
-                                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
-                                            required
-                                        >
-                                            <option value="BUY">Buy</option>
-                                            <option value="SELL">Sell</option>
-                                        </select>
                                     </div>
                                     <button
                                         type="submit"
                                         class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
                                     >
-                                        Submit Transaction
+                                        Buy Coins
                                     </button>
                                 </form>
-                            </>
-                        ) : (
-                            ""
-                        )
-                    }
-                </div>
+                                <form
+                                    method="POST"
+                                    class="space-y-2"
+                                    accept-charset="UTF-8"
+                                    enctype="multipart/form-data"
+                                >
+                                    <input
+                                        type="hidden"
+                                        name="action"
+                                        value="sell_transaction"
+                                    />
+                                    <div>
+                                        <label
+                                            for="amount"
+                                            class="block text-sm font-medium text-gray-700"
+                                        >
+                                            Sell Amount:
+                                        </label>
+                                        <input
+                                            name="amount"
+                                            type="number"
+                                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                                            value={0}
+                                            min="0"
+                                            max={`${total}`}
+                                            required
+                                        />
+                                    </div>
+                                    <button
+                                        type="submit"
+                                        class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                    >
+                                        Sell Coins
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    ) : (
+                        ""
+                    )
+                }
             </div>
         </Layout>
     </body>
