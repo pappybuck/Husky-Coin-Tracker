@@ -3,20 +3,27 @@ import Portfolio from "../components/react/Portfolio";
 import Layout from "../components/layout.astro";
 
 let user = null;
+let portfolio = null;
 
 if (Astro.locals.pb.authStore.isValid) {
     user = Astro.locals.pb.authStore.model;
 }
 
-const portfolio = await Astro.locals.pb
+const portfolioList = await Astro.locals.pb
     .collection("Portfolios")
-    .getList(1, 1, {
+    .getList(1, 100, {
         filter: `User.id = '${user?.id}'`,
 });
 
-const transactions = await Astro.locals.pb.collection("Transactions").getFullList();
+if (portfolioList) {
+    const portfolioItems = portfolioList.items;
+    console.log("Portfolio Items:", portfolioItems)
+    portfolio = await Promise.all(portfolioItems.map(async (portfolioItem) => {
+        return {...portfolioItem, Coin: await Astro.locals.pb.collection("Coins").getOne(portfolioItem.Coin)};
+    }));
+}
 
-console.log(transactions);
+const transactions = await Astro.locals.pb.collection("Transactions").getFullList();
 
 async function handleRequest(user: any, coin: any, type: any, amount: any) {
     if (!user || !coin || !type || !amount) {
@@ -78,48 +85,73 @@ if (Astro.request.method === "POST") {
             <h1 class="mt-3">Deposit/Withdraw</h1>
             <form
                 method="POST"
-                class="space-y-4 deposit-withdraw-form mt-3"
+                class="space-y-4 mb-12 deposit-withdraw-form"
                 accept-charset="UTF-8"
                 enctype="multipart/form-data"
             >
+                <input
+                    type="hidden"
+                    name="type"
+                    value="DEPOSIT"
+                />
                 <div>
                     <label
                         for="amount"
                         class="block text-sm font-medium text-gray-700"
                     >
-                        Amount:
+                        Deposit Amount:
                     </label>
                     <input
                         name="amount"
                         type="number"
                         class="block w-85 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
                         value={0}
+                        min="0"
                         required
                     />
                 </div>
+                <button
+                    type="submit"
+                    class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded "
+                >
+                    Deposit
+                </button>
+            </form>
+            <form
+                method="POST"
+                class="space-y-4 deposit-withdraw-form"
+                accept-charset="UTF-8"
+                enctype="multipart/form-data"
+            >
+                <input
+                    type="hidden"
+                    name="type"
+                    value="WITHDRAW"
+                />
                 <div>
                     <label
-                        for="type"
+                        for="amount"
                         class="block text-sm font-medium text-gray-700"
                     >
-                        Transaction Type:
+                        Withdraw Amount:
                     </label>
-                    <select
-                        name="type"
+                    <input
+                        name="amount"
+                        type="number"
                         class="block w-85 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                        value={0}
+                        min="0"
+                        max={user ? `${Math.floor(user.balance).toString()}` : "0"}
                         required
-                    >
-                        <option value="DEPOSIT">Deposit</option>
-                        <option value="WITHDRAW">Withdraw</option>
-                    </select>
+                    />
                 </div>
                 <button
                     type="submit"
                     class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
                 >
-                    Submit Transaction
+                    Withdraw
                 </button>
-            </form>
+            </form>                
         </Layout>
     </body>
 </html>

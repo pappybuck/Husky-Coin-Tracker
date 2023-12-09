@@ -13,10 +13,10 @@ function Portfolio({ user, portfolio, transactions }) {
 
     const [assets, setAssets] = useState(exampleAssets);
 
-    console.log("User:", user);
+    // console.log("User:", user);
     console.log("Portfolios", portfolio);
-    console.log("User balance:", user?.balance);
-    console.log("Transactions:", transactions)
+    // console.log("User balance:", user?.balance);
+    // console.log("Transactions:", transactions)
 
     return (
         <div className="portfolio-page-container mt-10">
