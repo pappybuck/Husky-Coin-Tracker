@@ -2,14 +2,14 @@ import { SolidApexCharts } from 'solid-apexcharts';
 
 
 
-export default function Chart ({Data} : {Data: number[][]}) {
+export default function Chart ({Data, name} : {Data: number[][], name: string}) {
 
 
 
     return (
     <SolidApexCharts options={{
         title: {
-            text: "Bitcoin Price",
+            text: name,
             align: "left",
         },
         grid: {
@@ -20,8 +20,8 @@ export default function Chart ({Data} : {Data: number[][]}) {
         },
         chart: {
             id: "datetime",
-            width: "50%",
-            height: 380,
+            width: "100%",
+            height: 650,
         },
         stroke: {
             width: 2,
