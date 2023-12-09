@@ -5,7 +5,7 @@ import Coin from "../../components/Coin";
 const { cid } = Astro.params;
 const user = Astro.locals.pb.authStore.model;
 
-let coin = null;
+let coin: any = null;
 
 if (cid) {
     const coinList = await Astro.locals.pb
@@ -17,13 +17,12 @@ if (cid) {
     }
 }
 
-console.log(coin)
-
 if (!coin) {
     return Astro.redirect("/");
 }
 
 let entry: any = null;
+const isWatched = user?.watchlist.includes(coin.id);
 
 const portfolioList = await Astro.locals.pb
     .collection("Portfolios")
@@ -40,7 +39,7 @@ async function handleRequest(user: any, coin: any, type: any, amount: any) {
         console.log("A parameter is missing!");
         return;
     }
-    
+
     if (type == "BUY") {
         try {
             await Astro.locals.pb.collection("Transactions").create({
@@ -69,9 +68,26 @@ async function handleRequest(user: any, coin: any, type: any, amount: any) {
 }
 
 if (Astro.request.method === "POST") {
-    console.log("Post triggered!");
     const data = await Astro.request.formData();
-    await handleRequest(user, coin, data.get("type"), data.get("amount"));
+    const actionType = data.get("action");
+
+    if (actionType === "subscribe") {
+        if (user) {
+            if (isWatched) {
+                await Astro.locals.pb.collection("users").update(user.id, {
+                    watchlist: user.watchlist.filter(
+                        (id: string) => id !== coin.id,
+                    ),
+                });
+            } else {
+                await Astro.locals.pb.collection("users").update(user.id, {
+                    watchlist: [...user.watchlist, coin.id],
+                });
+            }
+        }
+    } else if (actionType == "transaction") {
+        await handleRequest(user, coin, data.get("type"), data.get("amount"));
+    }
     return Astro.redirect(`/coins/${cid}`);
 }
 
@@ -88,16 +104,61 @@ const loggedIn = Astro.locals.pb.authStore.isValid;
                 <div class="w-3/4 p-6 flex items-center">
                     <Coin client:load coin={coin} />
                 </div>
-                <div class="w-1/4 p-6 flex items-center">
+                <div class="w-1/4 p-6 flex flex-col">
                     {
                         loggedIn ? (
                             <>
+                                <form
+                                    method="POST"
+                                    class="subscription-form"
+                                    accept-charset="UTF-8"
+                                >
+                                    <input
+                                        type="hidden"
+                                        name="action"
+                                        value="subscribe"
+                                    />
+                                    <button
+                                        type="submit"
+                                        class="bg-transparent border-none p-0"
+                                    >
+                                        {isWatched ? (
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                class="h-10 w-10"
+                                                fill="currentColor"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                                stroke-width="2"
+                                            >
+                                                <path d="M12 2l2.39 4.924 5.447.791-3.937 3.83.93 5.414-4.84-2.545-4.84 2.545.93-5.414-3.937-3.83 5.447-.791L12 2z" />
+                                            </svg>
+                                        ) : (
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                class="h-10 w-10"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                                stroke-width="2"
+                                            >
+                                                <path d="M12 2l2.39 4.924 5.447.791-3.937 3.83.93 5.414-4.84-2.545-4.84 2.545.93-5.414-3.937-3.83 5.447-.791L12 2z" />
+                                            </svg>
+                                        )}
+                                    </button>
+                                </form>
+
                                 <form
                                     method="POST"
                                     class="space-y-8"
                                     accept-charset="UTF-8"
                                     enctype="multipart/form-data"
                                 >
+                                    <input
+                                        type="hidden"
+                                        name="action"
+                                        value="transaction"
+                                    />
                                     <p class="">
                                         Amount Owned: {entry ? entry.Amount : 0}
                                     </p>
