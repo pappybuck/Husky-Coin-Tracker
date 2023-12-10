@@ -15,7 +15,7 @@ if (Astro.locals.pb.authStore.isValid) {
                 <img src="/misc/logo.png" alt="Logo" class="h-12 w-auto" />
             </a>
             <a href="/" class="text-white hover:text-white"> Dashboard</a>
-            <a href="/users" class="text-white hover:text-white"> Users</a>
+            <a href="/search" class="text-white hover:text-white"> Users</a>
             <a href="/portfolio" class="text-white hover:text-white"
                 >Portfolios</a
             >
@@ -32,7 +32,7 @@ if (Astro.locals.pb.authStore.isValid) {
                 user ? (
                     <div class="flex justify-center items-center">
                         <a
-                            href={`/users/${user.id}`}
+                            href={`/profile`}
                             class="text-white hover:text-white mr-4"
                         >
                             <img
@@ -47,7 +47,7 @@ if (Astro.locals.pb.authStore.isValid) {
                         </a>
                         <div class="flex flex-col">
                             <a
-                                href={`/users/${user.id}`}
+                                href={`/profile/${user.id}`}
                                 class="text-white hover:text-white"
                             >
                                 Balance: { `$${user.balance.toLocaleString(

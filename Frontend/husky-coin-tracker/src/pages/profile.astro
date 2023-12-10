@@ -1,0 +1,288 @@
+---
+import Layout from "../components/layout.astro";
+import { format } from "date-fns";
+
+const hostname = import.meta.env.PUBLIC_POCKETBASE_HOST;
+
+const { uid } = Astro.params;
+
+const user = Astro.locals.pb.authStore.model;
+
+if (!user) {
+    return Astro.redirect("/login");
+}
+
+if (Astro.request.method === "POST") {
+    const data = await Astro.request.formData();
+    const actionType = data.get("action");
+
+    try {
+        if (actionType === "delete-profile") {
+            await Astro.locals.pb.collection('users').delete(user.id);
+            return Astro.redirect(`/`);
+        } else if (actionType === "save-profile") {
+            const postData: any = {};
+            if (data.get("name")) {
+                postData.name = data.get("name");
+            }
+            if (data.get("bio")) {
+                postData.bio = data.get("bio");
+            }
+            if (data.get("location")) {
+                postData.location = data.get("location");
+            }
+            if (data.get("avatar") && (data.get("avatar") as File).size > 0) {
+                postData.avatar = data.get("avatar");
+            }
+            await Astro.locals.pb.collection("users").update(user.id, postData);
+            return Astro.redirect(`/profile`);
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+const coins = await Promise.all(
+    user.watchlist.map((id: string) => {
+        return Astro.locals.pb.collection("Coins").getOne(id);
+    }),
+);
+
+const edit = true;
+---
+
+<html>
+    <head>
+        <title>User Page</title>
+    </head>
+    <body>
+        <Layout>
+            <div>
+                <nav aria-label="Breadcrumb" class="p-6">
+                    <ol class="flex leading-none divide-x divide-red-400">
+                        <li class="pr-4">
+                            <a
+                                href="/profile"
+                                class="text-red-500 hover:text-red-600"
+                            >
+                                Users
+                            </a>
+                        </li>
+                        <li class="px-4 text-black" aria-current="page">
+                            {user.name}
+                        </li>
+                    </ol>
+                </nav>
+
+                <div class="flex">
+                    <div class="w-1/4 p-6 flex flex-col items-center">
+                        <label
+                            class="block text-sm font-medium text-gray-700 mb-2"
+                        >
+                            Joined {
+                                format(new Date(user.created), "MMMM d, yyyy")
+                            }
+                        </label>
+                        <img
+                            src={user.avatar
+                                ? `${hostname}/api/files/_pb_users_auth_/${user.id}/${user.avatar}?token=`
+                                : "/misc/default_pfp.jpeg"}
+                            alt="Profile Picture"
+                            class="w-96 h-96 rounded-full object-cover border-4 border-red-600 mb-2"
+                        />
+                        <label
+                            class="block text-sm font-medium text-gray-700 mb-2"
+                        >
+                            Coin Watchlist
+                        </label>
+                        {
+                            coins.length > 0 ? (
+                                <div class="flex">
+                                    {coins.map((coin: any, _: any) => (
+                                        <a href={`/coins/${coin.CoinId}`}>
+                                            <img
+                                                src={`/icons/${coin.Symbol}.svg`}
+                                                alt="Icon Picture"
+                                                class="rounded-full w-10 h-10 mr-2"
+                                            />
+                                        </a>
+                                    ))}
+                                </div>
+                            ) : (
+                                <label class="block text-xs font-medium text-gray-700 mb-2">
+                                    None
+                                </label>
+                            )
+                        }
+                    </div>
+
+                    <div class="w-3/4 p-6">
+                        <form
+                            method="POST"
+                            class="space-y-8 mb-4"
+                            accept-charset="UTF-8"
+                            enctype="multipart/form-data"
+                        >
+                            <input
+                                type="hidden"
+                                name="action"
+                                value="save-profile"
+                            />
+                            <div>
+                                <label
+                                    for="name"
+                                    class="block text-sm font-medium text-gray-700"
+                                >
+                                    Name:
+                                </label>
+                                <input
+                                    name="name"
+                                    type="text"
+                                    class={edit
+                                        ? "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                                        : "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none bg-gray-200 text-gray-500 cursor-not-allowed focus:outline-none focus:ring-0 focus:border-gray-300"}
+                                    value={user.name}
+                                    readonly={!edit}
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    for="username"
+                                    class="block text-sm font-medium text-gray-700"
+                                >
+                                    Username:
+                                </label>
+                                <input
+                                    name="username"
+                                    type="text"
+                                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none bg-gray-200 text-gray-500 cursor-not-allowed focus:outline-none focus:ring-0 focus:border-gray-300"
+                                    value={user.username}
+                                    readonly
+                                />
+                            </div>
+                            {
+                                edit ? (
+                                    <div>
+                                        <label
+                                            for="email"
+                                            class="block text-sm font-medium text-gray-700"
+                                        >
+                                            Email:
+                                        </label>
+                                        <input
+                                            name="email"
+                                            type="email"
+                                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none bg-gray-200 text-gray-500 cursor-not-allowed focus:outline-none focus:ring-0 focus:border-gray-300"
+                                            value={user.email}
+                                            readonly={!edit}
+                                        />
+                                    </div>
+                                ) : (
+                                    ""
+                                )
+                            }
+                            <div>
+                                <label
+                                    for="location"
+                                    class="block text-sm font-medium text-gray-700"
+                                >
+                                    Location:
+                                </label>
+                                <input
+                                    name="location"
+                                    type="text"
+                                    class={edit
+                                        ? "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                                        : "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none bg-gray-200 text-gray-500 cursor-not-allowed focus:outline-none focus:ring-0 focus:border-gray-300"}
+                                    value={user.location || edit
+                                        ? user.location
+                                        : "N/A"}
+                                    placeholder="N/A"
+                                    readonly={!edit}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    for="bio"
+                                    class="block text-sm font-medium text-gray-700"
+                                >
+                                    Bio:
+                                </label>
+                                <input
+                                    name="bio"
+                                    type="text"
+                                    class={edit
+                                        ? "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                                        : "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none bg-gray-200 text-gray-500 cursor-not-allowed focus:outline-none focus:ring-0 focus:border-gray-300"}
+                                    value={user.bio || edit ? user.bio : "N/A"}
+                                    placeholder="N/A"
+                                    readonly={!edit}
+                                />
+                            </div>
+                            {
+                                edit ? (
+                                    <div>
+                                        <label
+                                            for="avatar"
+                                            class="block text-sm font-medium text-gray-700 mb-1"
+                                        >
+                                            Avatar:
+                                        </label>
+                                        <input
+                                            type="file"
+                                            name="avatar"
+                                            class="block text-sm text-gray-500
+                            file:mr-4 file:py-2 file:px-4
+                            file:rounded-full file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-red-50 file:text-red-700
+                            hover:file:bg-red-100"
+                                        />
+                                    </div>
+                                ) : (
+                                    ""
+                                )
+                            }
+                            {
+                                edit ? (
+                                    <button
+                                        type="submit"
+                                        class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                    >
+                                        Save Profile
+                                    </button>
+                                ) : (
+                                    ""
+                                )
+                            }
+                        </form>
+                        {
+                            edit ? (
+                                <form
+                                    method="POST"
+                                    class="subscription-form"
+                                    accept-charset="UTF-8"
+                                >
+                                    <input
+                                        type="hidden"
+                                        name="action"
+                                        value="delete-profile"
+                                    />
+                                    <button
+                                        type="submit"
+                                        class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                    >
+                                        Delete Profile
+                                    </button>
+                                </form>
+                            ) : (
+                                ""
+                            )
+                        }
+                    </div>
+                </div>
+            </div>
+        </Layout>
+    </body>
+</html>

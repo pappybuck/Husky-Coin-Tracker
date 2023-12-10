@@ -65,7 +65,7 @@ const UserSearch = (props: any) => {
                     <For each={filteredUsers()}>
                         {(user) => (
                             <a
-                                href={`/users/${user.id}`}
+                                href={`/profile/${user.id}`}
                                 class="block bg-gray-50 rounded-lg shadow hover:shadow-md p-4"
                             >
                                 <div class="flex items-center space-x-3">
