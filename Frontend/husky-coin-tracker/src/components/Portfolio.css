@@ -11,7 +11,8 @@
 .statistic-boxes-container {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: start;
+    gap: 50px;
 }
 
 .statistic-box {
@@ -38,11 +39,11 @@
     font-size: 32px;
 }
 
-.assets-title {
+.panel-title {
     font-size: 32px;
 }
 
-.asset-table {
+.table {
     width: 90%;
     height: 100%;
 }
@@ -70,9 +71,11 @@ th {
     display: flex;
     justify-content: center;
     font-size: 24px;
+    padding-left: 5%;
+    padding-right: 5%;
 }
 
-.market-cap-container {
+.value-container {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -83,3 +86,15 @@ th {
     background-color: orange;
     padding: 4px;
 }
+
+.recent-transactions-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 2px solid black;
+    border-color: lightgrey;
+    border-radius: 20px;
+    padding-top: 10px;
+    padding-bottom: 20px;
+}
+

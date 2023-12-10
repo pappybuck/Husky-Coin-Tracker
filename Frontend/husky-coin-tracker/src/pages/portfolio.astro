@@ -4,6 +4,9 @@ import Layout from "../components/layout.astro";
 
 let user = null;
 let portfolio = null;
+let transactions = null;
+
+Astro.locals.pb.autoCancellation(false);
 
 if (Astro.locals.pb.authStore.isValid) {
     user = Astro.locals.pb.authStore.model;
@@ -17,13 +20,28 @@ const portfolioList = await Astro.locals.pb
 
 if (portfolioList) {
     const portfolioItems = portfolioList.items;
-    console.log("Portfolio Items:", portfolioItems)
     portfolio = await Promise.all(portfolioItems.map(async (portfolioItem) => {
         return {...portfolioItem, Coin: await Astro.locals.pb.collection("Coins").getOne(portfolioItem.Coin)};
     }));
 }
 
-const transactions = await Astro.locals.pb.collection("Transactions").getFullList();
+
+const transactionsList = await Astro.locals.pb
+    .collection("Transactions")
+    .getList(1, 100, {
+        filter: `User.id = '${user?.id}'`,
+});
+
+if (transactionsList) {
+    const transactionsItems = transactionsList.items;
+    console.log("transactionsItems:", transactionsItems);
+    transactions = await Promise.all(transactionsItems.map(async (transactionsItem) => {
+        if (transactionsItem.Coin !== "") {
+            return {...transactionsItem, Coin: await Astro.locals.pb.collection("Coins").getOne(transactionsItem.Coin)}
+        }
+        return {...transactionsItem, Coin: ""};
+    }));
+}
 
 async function handleRequest(user: any, coin: any, type: any, amount: any) {
     if (!user || !coin || !type || !amount) {
@@ -82,8 +100,8 @@ if (Astro.request.method === "POST") {
     <body>
         <Layout>
             <Portfolio client:load user={user} portfolio={portfolio} transactions={transactions}/>
-            <h1 class="mt-3">Deposit/Withdraw</h1>
-            <form
+            {user && <h1 class="mt-3">Deposit/Withdraw</h1>}
+            {user && <form
                 method="POST"
                 class="space-y-4 mb-12 deposit-withdraw-form"
                 accept-charset="UTF-8"
@@ -151,7 +169,7 @@ if (Astro.request.method === "POST") {
                 >
                     Withdraw
                 </button>
-            </form>                
+            </form>}               
         </Layout>
     </body>
 </html>
