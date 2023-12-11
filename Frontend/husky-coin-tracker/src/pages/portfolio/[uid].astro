@@ -1,0 +1,184 @@
+---
+import Portfolio from "../../components/Portfolio";
+import Layout from "../../components/layout.astro";
+
+let user = null;
+let portfolio = null;
+let transactions = null;
+
+Astro.locals.pb.autoCancellation(false);
+
+const { uid } = Astro.params;
+
+if (uid) {
+    user = await Astro.locals.pb.collection("users").getOne(uid);
+}
+
+const edit =
+    (Astro.locals.pb.authStore.isValid &&
+        Astro.locals.pb.authStore.model?.id == uid) ||
+    Astro.locals.pb.authStore.model?.isAdmin;
+
+const portfolioList = await Astro.locals.pb
+    .collection("Portfolios")
+    .getList(1, 100, {
+        filter: `User.id = '${user?.id}'`,
+});
+
+if (portfolioList) {
+    const portfolioItems = portfolioList.items;
+    portfolio = await Promise.all(portfolioItems.map(async (portfolioItem) => {
+        return {...portfolioItem, Coin: await Astro.locals.pb.collection("Coins").getOne(portfolioItem.Coin)};
+    }));
+}
+
+
+const transactionsList = await Astro.locals.pb
+    .collection("Transactions")
+    .getList(1, 100, {
+        filter: `User.id = '${user?.id}'`,
+});
+
+if (transactionsList) {
+    const transactionsItems = transactionsList.items;
+    console.log("transactionsItems:", transactionsItems);
+    transactions = await Promise.all(transactionsItems.map(async (transactionsItem) => {
+        if (transactionsItem.Coin !== "") {
+            return {...transactionsItem, Coin: await Astro.locals.pb.collection("Coins").getOne(transactionsItem.Coin)}
+        }
+        return {...transactionsItem, Coin: ""};
+    }));
+}
+
+async function handleRequest(user: any, coin: any, type: any, amount: any) {
+    if (!user || !coin || !type || !amount) {
+        console.log("A parameter is missing!");
+        return;
+    }
+    
+    if (type == "DEPOSIT") {
+        console.log("Test passed!");
+        try {
+            await Astro.locals.pb.collection("Transactions").create({
+                User: user.id,
+                Type: "Deposit",
+                Amount: parseInt(amount),
+                Coin: "",
+            });
+        } catch (error) {
+            console.log(`Buy error: ${error}`);
+        }
+    } else if (type == "WITHDRAW") {
+        try {
+            await Astro.locals.pb.collection("Transactions").create({
+                User: user.id,
+                Type: "Withdraw",
+                Amount: parseInt(amount),
+                Coin: "",
+            });
+        } catch (error) {
+            console.log(`Sell error: ${error}`);
+        }
+    } else {
+        console.log("Unhandled request type...");
+    }
+}
+
+if (Astro.request.method === "POST") {
+    console.log("Post triggered!");
+    const data = await Astro.request.formData();
+    await handleRequest(user, data.get("type"), data.get("type"), data.get("amount"));
+    return Astro.redirect(`/portfolio`);
+}
+---
+
+<html>
+    <head>
+        <title>Portfolio Page</title>
+        <style>
+            .deposit-withdraw-form { padding-left: 15%;
+            padding-right: 15%; }
+
+            h1 { padding-left: 15%;
+            padding-right: 15%;
+            font-size: 32px;}
+        </style>
+    </head>
+    <body>
+        <Layout>
+            <Portfolio client:load user={user} portfolio={portfolio} transactions={transactions}/>
+            {edit && <div>
+            {user && <h1 class="mt-3">Deposit/Withdraw</h1>}
+            {user && <form
+                method="POST"
+                class="space-y-4 mb-12 deposit-withdraw-form"
+                accept-charset="UTF-8"
+                enctype="multipart/form-data"
+            >
+                <input
+                    type="hidden"
+                    name="type"
+                    value="DEPOSIT"
+                />
+                <div>
+                    <label
+                        for="amount"
+                        class="block text-sm font-medium text-gray-700"
+                    >
+                        Deposit Amount:
+                    </label>
+                    <input
+                        name="amount"
+                        type="number"
+                        class="block w-85 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                        value={0}
+                        min="0"
+                        required
+                    />
+                </div>
+                <button
+                    type="submit"
+                    class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded "
+                >
+                    Deposit
+                </button>
+            </form>
+            <form
+                method="POST"
+                class="space-y-4 deposit-withdraw-form"
+                accept-charset="UTF-8"
+                enctype="multipart/form-data"
+            >
+                <input
+                    type="hidden"
+                    name="type"
+                    value="WITHDRAW"
+                />
+                <div>
+                    <label
+                        for="amount"
+                        class="block text-sm font-medium text-gray-700"
+                    >
+                        Withdraw Amount:
+                    </label>
+                    <input
+                        name="amount"
+                        type="number"
+                        class="block w-85 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                        value={0}
+                        min="0"
+                        max={user ? `${Math.floor(user.balance).toString()}` : "0"}
+                        required
+                    />
+                </div>
+                <button
+                    type="submit"
+                    class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                >
+                    Withdraw
+                </button>
+            </form>} </div>
+            }               
+        </Layout>
+    </body>
+</html>

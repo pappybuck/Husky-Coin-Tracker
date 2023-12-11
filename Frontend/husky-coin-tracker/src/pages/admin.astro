@@ -14,6 +14,8 @@ if (!user?.isAdmin) {
 
 const users = await Astro.locals.pb.collection("users").getFullList();
 const coins = await Astro.locals.pb.collection("Coins").getFullList();
+const transactions = (await Astro.locals.pb.collection("Transactions").getFullList()).length;
+
 ---
 
 <html>
@@ -22,7 +24,7 @@ const coins = await Astro.locals.pb.collection("Coins").getFullList();
     </head>
     <body>
         <Layout>
-            <AdminDashboard client:load users={users} coins={coins} />
+            <AdminDashboard client:load users={users} coins={coins} transactions={transactions}/>
         </Layout>
     </body>
 </html>
