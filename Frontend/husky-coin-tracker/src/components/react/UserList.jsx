@@ -5,8 +5,7 @@ function UserList({users}) {
     const [searchBy, setSearchBy] = useState('username');
     return (
         <div className="mx-40 p-10 rounded-2xl">
-            <h2 className="text-3xl font-bold text-gray-700 my-5"> User List</h2>
-            <form>  
+            <form class="mb-2">  
                 <b> Search By:</b>  
                 <select className="ml-1 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" id = "filter" onChange={(e) => {
                 setSearchBy(e.target.value)}} value={searchBy}>   
