@@ -88,7 +88,7 @@ if (Astro.request.method === "POST") {
     console.log("Post triggered!");
     const data = await Astro.request.formData();
     await handleRequest(user, data.get("type"), data.get("type"), data.get("amount"));
-    return Astro.redirect(`/portfolio`);
+    return Astro.redirect(`/portfolio/${user.id}`);
 }
 ---
 
