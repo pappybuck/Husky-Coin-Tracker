@@ -64,7 +64,7 @@ function UserList({users}) {
                         {user.created}
                     </td>
                     <td className="px-6 py-3 flex justify-end">
-                        <a href={"/profile/"+ user.id} class="bg-red-600 hover:bg-red-700 text-white py-2 px-20 rounded">
+                        <a href={"/profile/"+ user.id} className="bg-red-600 hover:bg-red-700 text-white py-2 px-20 rounded">
                             Edit User
                         </a>
                     </td>
