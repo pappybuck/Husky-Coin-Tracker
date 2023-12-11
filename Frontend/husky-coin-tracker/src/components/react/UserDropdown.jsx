@@ -6,7 +6,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function EditUserDropdown({_id}) {
+export default function EditUserDropdown({uid}) {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
@@ -29,20 +29,7 @@ export default function EditUserDropdown({_id}) {
             <Menu.Item>
               {({ active }) => (
                 <a
-                  href={'/profile/' + _id}
-                  className={classNames(
-                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                    'block px-4 py-2 text-sm'
-                  )}
-                >
-                  View Portfolio
-                </a>
-              )}
-            </Menu.Item>
-            <Menu.Item>
-              {({ active }) => (
-                <a
-                  href="#"
+                  href={"/profile/" + uid}
                   className={classNames(
                     active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                     'block px-4 py-2 text-sm'
@@ -55,7 +42,7 @@ export default function EditUserDropdown({_id}) {
             <Menu.Item>
               {({ active }) => (
                 <a
-                  href="#"
+                  href={"/portfolio/" + uid}
                   className={classNames(
                     active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                     'block px-4 py-2 text-sm'
@@ -65,21 +52,6 @@ export default function EditUserDropdown({_id}) {
                 </a>
               )}
             </Menu.Item>
-            <form method="POST" action="#">
-              <Menu.Item>
-                {({ active }) => (
-                  <button
-                    type="submit"
-                    className={classNames(
-                      active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                      'block w-full px-4 py-2 text-left text-sm'
-                    )}
-                  >
-                    Delete User
-                  </button>
-                )}
-              </Menu.Item>
-            </form>
           </div>
         </Menu.Items>
       </Transition>

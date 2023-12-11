@@ -47,7 +47,7 @@ export default function Portfolio(props: any) {
                     Buying Power: ${buyingPower().toFixed(2).toString()}
             </div>
             <div class="assets-container mt-10">
-                <div class="panel-title mx-2">Your Assets</div>
+                <div class="panel-title mx-2">Assets</div>
                 <div class="table-container">
                     <table class="border w-full text-sm text-left rtl:text-right text-gray-500">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50">
@@ -146,7 +146,7 @@ export default function Portfolio(props: any) {
                 </div>
             </div>
             <div class="recent-transactions-container mt-10">
-                <div class="panel-title mx-2">Your Recent Transactions</div>
+                <div class="panel-title mx-2">Recent Transactions</div>
                 <div class="table-container">
                     <table class="border w-full text-sm text-left rtl:text-right text-gray-500">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50">
