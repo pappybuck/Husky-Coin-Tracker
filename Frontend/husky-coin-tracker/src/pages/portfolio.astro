@@ -41,7 +41,6 @@ const transactionsList = await Astro.locals.pb
 
 if (transactionsList) {
     const transactionsItems = transactionsList.items;
-    console.log("transactionsItems:", transactionsItems);
     transactions = await Promise.all(
         transactionsItems.map(async (transactionsItem) => {
             if (transactionsItem.Coin !== "") {
@@ -59,12 +58,10 @@ if (transactionsList) {
 
 async function handleRequest(user: any, coin: any, type: any, amount: any) {
     if (!user || !coin || !type || !amount) {
-        console.log("A parameter is missing!");
         return;
     }
 
     if (type == "DEPOSIT") {
-        console.log("Test passed!");
         try {
             await Astro.locals.pb.collection("Transactions").create({
                 User: user.id,
@@ -92,7 +89,6 @@ async function handleRequest(user: any, coin: any, type: any, amount: any) {
 }
 
 if (Astro.request.method === "POST") {
-    console.log("Post triggered!");
     const data = await Astro.request.formData();
     await handleRequest(
         user,
@@ -108,6 +104,8 @@ let initialTotalInvested = 0;
 portfolio?.forEach((entry: any) => {
     initialTotalInvested += entry.Amount * entry.Coin.Price
 })
+
+const totalNetworth = initialTotalInvested + user.balance;
 ---
 
 <html>
@@ -121,8 +119,8 @@ portfolio?.forEach((entry: any) => {
                     <div>
                         <p class="text-2xl font-medium text-black">Total Invested</p>
                         <div class="mt-1 mb-3 text-md font-medium text-black">${initialTotalInvested.toFixed(2)}</div>
-                        <div class="text-2xl font-medium text-black">Buying Power</div>
-                        <div class="mt-1 text-md font-medium text-black">${user.balance.toFixed(2)}</div>
+                        <div class="text-2xl font-medium text-black">Total Networth</div>
+                        <div class="mt-1 text-md font-medium text-black">${totalNetworth.toFixed(2)}</div>
                     </div>
                 </div>
                 <div class="flex flex-row">
