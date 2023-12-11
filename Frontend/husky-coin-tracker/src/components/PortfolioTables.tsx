@@ -24,7 +24,7 @@ export default function Portfolio(props: any) {
         <>
             <div class="portfolio-page-container mt-10">
                 <div class="assets-container ml-12 mr-12 mb-6">
-                    <div class="text-lg font-medium text-black mb-2">Portfolio Assets</div>
+                    <div class="text-2xl font-medium text-black mb-2">Portfolio Assets</div>
                     {assets.length > 0 ?
                         <div class="table-container">
                             <table class="border w-full text-sm text-left rtl:text-right text-gray-500">
@@ -115,7 +115,7 @@ export default function Portfolio(props: any) {
                     }
                 </div>
                 <div class="recent-transactions-container ml-12 mr-12 mb-12">
-                    <div class="text-lg font-medium text-black mb-2">Recent Transactions</div>
+                    <div class="text-2xl font-medium text-black mb-2">Recent Transactions</div>
                     {transactions.length > 0 ?
                         <div class="table-container">
                             <table class="border w-full text-sm text-left rtl:text-right text-gray-500">
