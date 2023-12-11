@@ -55,6 +55,14 @@ export default function Coin(props: any) {
                                 </span>
                             </div>
                             <div class="h-px bg-black opacity-10"></div>
+
+                            <div class="flex items-center justify-between">
+                                <span class="opacity-60 font-medium text-black">
+                                    <a class="underline" target="_blank" href={`https://www.blockchain.com/explorer/mempool/${props.coin.Symbol}`}>
+                                        Recent Global Transactions </a>
+                                </span>
+                            </div>
+                            <div class="h-px bg-black opacity-10"></div>
                         </div>
 
                         <div class="w-full mt-4">
