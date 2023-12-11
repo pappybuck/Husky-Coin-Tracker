@@ -22,7 +22,7 @@ import (
 )
 
 var (
-	api_key = "CG-vVVghWcVHTz7tUzxrY2RqSJB"
+	api_key = ""
 )
 
 func main() {
@@ -42,12 +42,12 @@ func main() {
 		},
 	})
 
-	// api_key = os.Getenv("API_KEY")
+	api_key = os.Getenv("API_KEY")
 
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
 		scheduler := cron.New()
 
-		scheduler.MustAdd("UpdateDashboard", "*/2 * * * *", func() {
+		scheduler.MustAdd("UpdateDashboard", "*/10 * * * *", func() {
 			log.Println("UpdateDashboard")
 			updateCoins(app)
 

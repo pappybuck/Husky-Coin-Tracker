@@ -1,6 +1,111 @@
 ---
-import Portfolio from "../components/react/Portfolio";
+import PortfolioTable from "../components/PortfolioTables";
 import Layout from "../components/layout.astro";
+
+const user = Astro.locals.pb.authStore.model;
+
+if (!user) {
+    return Astro.redirect("/login");
+}
+
+let portfolio = null;
+let transactions = null;
+
+Astro.locals.pb.autoCancellation(false);
+
+const portfolioList = await Astro.locals.pb
+    .collection("Portfolios")
+    .getList(1, 100, {
+        filter: `User.id = '${user?.id}'`,
+    });
+
+if (portfolioList) {
+    const portfolioItems = portfolioList.items;
+    portfolio = await Promise.all(
+        portfolioItems.map(async (portfolioItem) => {
+            return {
+                ...portfolioItem,
+                Coin: await Astro.locals.pb
+                    .collection("Coins")
+                    .getOne(portfolioItem.Coin),
+            };
+        }),
+    );
+}
+
+const transactionsList = await Astro.locals.pb
+    .collection("Transactions")
+    .getList(1, 100, {
+        filter: `User.id = '${user?.id}'`,
+    });
+
+if (transactionsList) {
+    const transactionsItems = transactionsList.items;
+    transactions = await Promise.all(
+        transactionsItems.map(async (transactionsItem) => {
+            if (transactionsItem.Coin !== "") {
+                return {
+                    ...transactionsItem,
+                    Coin: await Astro.locals.pb
+                        .collection("Coins")
+                        .getOne(transactionsItem.Coin),
+                };
+            }
+            return { ...transactionsItem, Coin: "" };
+        }),
+    );
+}
+
+async function handleRequest(user: any, coin: any, type: any, amount: any) {
+    if (!user || !coin || !type || !amount) {
+        return;
+    }
+
+    if (type == "DEPOSIT") {
+        try {
+            await Astro.locals.pb.collection("Transactions").create({
+                User: user.id,
+                Type: "Deposit",
+                Amount: parseInt(amount),
+                Coin: "",
+            });
+        } catch (error) {
+            console.log(`Buy error: ${error}`);
+        }
+    } else if (type == "WITHDRAW") {
+        try {
+            await Astro.locals.pb.collection("Transactions").create({
+                User: user.id,
+                Type: "Withdraw",
+                Amount: parseInt(amount),
+                Coin: "",
+            });
+        } catch (error) {
+            console.log(`Sell error: ${error}`);
+        }
+    } else {
+        console.log("Unhandled request type...");
+    }
+}
+
+if (Astro.request.method === "POST") {
+    const data = await Astro.request.formData();
+    await handleRequest(
+        user,
+        data.get("type"),
+        data.get("type"),
+        data.get("amount"),
+    );
+    return Astro.redirect(`/portfolio`);
+}
+
+let initialTotalInvested = 0;
+
+portfolio?.forEach((entry: any) => {
+    initialTotalInvested += entry.Amount * entry.Coin.Price
+})
+
+const totalNetworth = initialTotalInvested + user.balance;
 ---
 
 <html>
@@ -9,7 +114,90 @@ import Layout from "../components/layout.astro";
     </head>
     <body>
         <Layout>
-            <Portfolio client:load />
+            <div class="flex flex-row ml-12 mr-12 mt-10">
+                <div class="flex flex-col w-3/4">
+                    <div>
+                        <p class="text-2xl font-medium text-black">Total Invested</p>
+                        <div class="mt-1 mb-3 text-md font-medium text-black">${initialTotalInvested.toFixed(2)}</div>
+                        <div class="text-2xl font-medium text-black">Total Networth</div>
+                        <div class="mt-1 text-md font-medium text-black">${totalNetworth.toFixed(2)}</div>
+                    </div>
+                </div>
+                <div class="flex flex-row">
+                    <form
+                        method="POST"
+                        class="space-y-4 deposit-withdraw-form mr-20"
+                        accept-charset="UTF-8"
+                        enctype="multipart/form-data"
+                    >
+                        <input type="hidden" name="type" value="DEPOSIT" />
+                        <div>
+                            <label
+                                for="amount"
+                                class="block text-sm font-medium text-gray-700"
+                            >
+                                Deposit Amount:
+                            </label>
+                            <input
+                                name="amount"
+                                type="number"
+                                class="block w-85 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                                value={0}
+                                min="0"
+                                required
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                        >
+                            Deposit
+                        </button>
+                    </form>
+                    <div class="flex flex-row w-1/4">
+                        <form
+                            method="POST"
+                            class="space-y-4 deposit-withdraw-form"
+                            accept-charset="UTF-8"
+                            enctype="multipart/form-data"
+                        >
+                            <input type="hidden" name="type" value="WITHDRAW" />
+                            <div>
+                                <label
+                                    for="amount"
+                                    class="block text-sm font-medium text-gray-700"
+                                >
+                                    Withdraw Amount:
+                                </label>
+                                <input
+                                    name="amount"
+                                    type="number"
+                                    class="block w-85 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+                                    value={0}
+                                    min="0"
+                                    max={user
+                                        ? `${Math.floor(user.balance).toString()}`
+                                        : "0"}
+                                    required
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                            >
+                                Withdraw
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <PortfolioTable
+                client:load
+                user={user}
+                portfolio={portfolio}
+                transactions={transactions}
+            />
         </Layout>
     </body>
 </html>
