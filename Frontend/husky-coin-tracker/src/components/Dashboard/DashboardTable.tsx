@@ -25,15 +25,56 @@ export default function DashboardTable({ coins }: { coins: Coin[] }) {
 
 
 
-    const sortCoinsPrice = (reverse = true) => {
-        const sortedCoins = [...coinList.coinList].sort((a, b) => {
-            return b.price - a.price;
-        });
-        if (sort() === Sort.PRICE) {
-            sortedCoins.reverse();
-            setSort(Sort.PRICE_REVERSE);
-        } else {
-            setSort(Sort.PRICE);
+    const sortCoins = () => {
+        let sortedCoins = [...coinList.coinList];
+        if (sort() === Sort.NAME) {
+            sortedCoins = sortedCoins.sort((a, b) => {
+                return a.name.localeCompare(b.name);
+            });
+        } else if (sort() === Sort.NAME_REVERSE) {
+            sortedCoins = sortedCoins.sort((a, b) => {
+                return b.name.localeCompare(a.name);
+            });
+        } else if (sort() === Sort.PRICE) {
+            sortedCoins = sortedCoins.sort((a, b) => {
+                return b.price - a.price;
+            });
+        } else if (sort() === Sort.PRICE_REVERSE) {
+            sortedCoins = sortedCoins.sort((a, b) => {
+                return a.price - b.price;
+            });
+        } else if (sort() === Sort.HOUR) {
+            sortedCoins = sortedCoins.sort((a, b) => {
+                return b.hour - a.hour;
+            });
+        } else if (sort() === Sort.HOUR_REVERSE) {
+            sortedCoins = sortedCoins.sort((a, b) => {
+                return a.hour - b.hour;
+            });
+        } else if (sort() === Sort.DAY) {
+            sortedCoins = sortedCoins.sort((a, b) => {
+                return b.day - a.day;
+            });
+        } else if (sort() === Sort.DAY_REVERSE) {
+            sortedCoins = sortedCoins.sort((a, b) => {
+                return a.day - b.day;
+            });
+        } else if (sort() === Sort.WEEK) {
+            sortedCoins = sortedCoins.sort((a, b) => {
+                return b.week - a.week;
+            });
+        } else if (sort() === Sort.WEEK_REVERSE) {
+            sortedCoins = sortedCoins.sort((a, b) => {
+                return a.week - b.week;
+            });
+        } else if (sort() === Sort.MARKETCAP) {
+            sortedCoins = sortedCoins.sort((a, b) => {
+                return b.marketcap - a.marketcap;
+            });
+        } else if (sort() === Sort.MARKETCAP_REVERSE) {
+            sortedCoins = sortedCoins.sort((a, b) => {
+                return a.marketcap - b.marketcap;
+            });
         }
         filterCoinList("coinList", sortedCoins);
     }
@@ -68,9 +109,7 @@ export default function DashboardTable({ coins }: { coins: Coin[] }) {
                                         return coin.name.toLowerCase().includes(search().toLowerCase());
                                     })
                                 );
-                                if (sort() !== undefined) {
-                                    sortCoinsPrice(false);
-                                }
+                                sortCoins();
                             }}
                         />
                     </form>
@@ -81,15 +120,29 @@ export default function DashboardTable({ coins }: { coins: Coin[] }) {
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                     <tr>
                         <th scope="col" class="px-6 py-3">
-                            <div class="flex items-center">
+                            <button class="flex items-center" onClick={() => {
+                                if (sort() === Sort.NAME) {
+                                    setSort(Sort.NAME_REVERSE);
+                                } else {
+                                    setSort(Sort.NAME);
+                                }
+                                sortCoins();
+                            }}>
                                 Coin Name
                                 <svg class="w-3 h-3 ms-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
                                 </svg>
-                            </div>
+                            </button>
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            <button class="flex items-center" onClick={() => sortCoinsPrice()}>
+                            <button class="flex items-center" onClick={() => {
+                                if (sort() === Sort.PRICE) {
+                                    setSort(Sort.PRICE_REVERSE);
+                                } else {
+                                    setSort(Sort.PRICE);
+                                }
+                                sortCoins();
+                            }}>
                                 Price
                                 <svg class="w-3 h-3 ms-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
@@ -97,36 +150,65 @@ export default function DashboardTable({ coins }: { coins: Coin[] }) {
                             </button>
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            <div class="flex items-center">
+                            <button class="flex items-center" onClick={() => {
+                                if (sort() === Sort.HOUR) {
+                                    setSort(Sort.HOUR_REVERSE);
+                                } else {
+                                    setSort(Sort.HOUR);
+                                }
+                                sortCoins();
+                            
+                            }}>
                                 1h %
                                 <svg class="w-3 h-3 ms-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
                                 </svg>
-                            </div>
+                            </button>
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            <div class="flex items-center">
+                            <button class="flex items-center" onClick={() => {
+                                if (sort() === Sort.DAY) {
+                                    setSort(Sort.DAY_REVERSE);
+                                } else {
+                                    setSort(Sort.DAY);
+                                }
+                                sortCoins();
+                            }}>
                                 24 %
                                 <svg class="w-3 h-3 ms-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
                                 </svg>
-                            </div>
+                            </button>
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            <div class="flex items-center">
+                            <button class="flex items-center" onClick={() => {
+                                if (sort() === Sort.WEEK) {
+                                    setSort(Sort.WEEK_REVERSE);
+                                } else {
+                                    setSort(Sort.WEEK);
+                                }
+                                sortCoins();
+                            }}>
                                 7d %
                                 <svg class="w-3 h-3 ms-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
                                 </svg>
-                            </div>
+                            </button>
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            <div class="flex items-center">
+                            <button class="flex items-center" onClick={() => {
+                                if (sort() === Sort.MARKETCAP) {
+                                    setSort(Sort.MARKETCAP_REVERSE);
+                                } else {
+                                    setSort(Sort.MARKETCAP);
+                                }
+                                sortCoins();
+                            }}>
                                 Market Cap
                                 <svg class="w-3 h-3 ms-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
                                 </svg>
-                            </div>
+                            </button>
                         </th>
                     </tr>
                 </thead>

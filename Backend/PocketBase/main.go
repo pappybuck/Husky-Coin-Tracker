@@ -21,6 +21,10 @@ import (
 	_ "coin-tracker/migrations"
 )
 
+var (
+	api_key = "CG-vVVghWcVHTz7tUzxrY2RqSJB"
+)
+
 func main() {
 	app := pocketbase.New()
 
@@ -38,10 +42,12 @@ func main() {
 		},
 	})
 
+	// api_key = os.Getenv("API_KEY")
+
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
 		scheduler := cron.New()
 
-		scheduler.MustAdd("UpdateDashboard", "*/10 * * * *", func() {
+		scheduler.MustAdd("UpdateDashboard", "*/2 * * * *", func() {
 			log.Println("UpdateDashboard")
 			updateCoins(app)
 
@@ -153,6 +159,7 @@ func main() {
 
 func updateCoins(app *pocketbase.PocketBase) {
 	collection, err := app.Dao().FindCollectionByNameOrId("Coins")
+	count := 0
 	if err != nil {
 		log.Println(err)
 	}
@@ -165,10 +172,12 @@ func updateCoins(app *pocketbase.PocketBase) {
 	}
 
 	for _, record := range records {
-		response, err := http.Get("https://api.coingecko.com/api/v3/coins/" + record.Get("CoinId").(string))
+		response, err := http.Get("https://api.coingecko.com/api/v3/coins/" + record.Get("CoinId").(string) + "?x_cg_demo_api_key=" + api_key)
 		if err != nil {
 			log.Println(err)
 		}
+		count += 1
+		log.Println("Updating", record.Get("Name"), count, "/", len(records))
 		body, err := io.ReadAll(response.Body)
 		if err != nil {
 			log.Println(err)
@@ -195,7 +204,7 @@ func updateCoins(app *pocketbase.PocketBase) {
 		app.Dao().Save(record)
 
 	}
-	updateNetworth(app)
+	// updateNetworth(app)
 }
 
 func updateNetworth(app *pocketbase.PocketBase) {
