@@ -17,10 +17,10 @@ enum Sort {
     MARKETCAP_REVERSE
 }
 
-export default function DashboardTable({ coins }: { coins: Coin[] }) {
+export default function DashboardTable({ coins, searchQuery }: { coins: Coin[], searchQuery: string | null }) {
 
     const [coinList, filterCoinList] = createStore({ coinList: coins, originalCoinList: coins });
-    const [search, setSearch] = createSignal("");
+    const [search, setSearch] = createSignal(searchQuery);
     const [sort, setSort] = createSignal<Sort>();
 
 
@@ -99,23 +99,19 @@ export default function DashboardTable({ coins }: { coins: Coin[] }) {
                         <input
                             type="text"
                             id="table-search"
+                            name="coin"
                             class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Search for coins..."
-                            onInput={(e) => {
-                                setSearch(e.currentTarget.value);
-                                filterCoinList(
-                                    "coinList",
-                                    coinList.originalCoinList.filter((coin) => {
-                                        return coin.name.toLowerCase().includes(search().toLowerCase());
-                                    })
-                                );
-                                sortCoins();
-                            }}
+                            value={ search() ?? "" }
                         />
                     </form>
                 </div>
             </div>
-
+            {coinList.coinList.length === 0 ? (
+                <div class="flex items-center justify-center h-96">
+                    <div class="text-3xl text-gray-400">No coins found</div>
+                </div>
+            ) : (
             <table class="border w-full text-sm text-left rtl:text-right text-gray-500">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                     <tr>
@@ -297,6 +293,7 @@ export default function DashboardTable({ coins }: { coins: Coin[] }) {
 
                 </tbody>
             </table>
+            )}
         </div>
     )
 
