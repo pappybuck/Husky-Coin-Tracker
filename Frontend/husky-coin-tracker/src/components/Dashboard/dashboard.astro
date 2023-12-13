@@ -32,8 +32,8 @@ for (let i = 0; i < resp.length; i++) {
     });
 }
 
-if (Astro.url.searchParams.has("coin")) {
-    search = Astro.url.searchParams.get("coin");
+if (Astro.url.searchParams.has("search")) {
+    search = Astro.url.searchParams.get("search");
     if (search) {
         coins = coins.filter((coin) => {
             return coin.name.toLowerCase().includes(search.toLowerCase());
@@ -47,5 +47,5 @@ if (Astro.url.searchParams.has("coin")) {
 
 
 <div class="relative overflow-x-auto m-12">
-    <DashboardTable coins={coins} client:load searchQuery={search}/>
+    <DashboardTable search={coins} client:load searchQuery={search}/>
 </div>

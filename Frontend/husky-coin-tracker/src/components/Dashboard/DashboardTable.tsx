@@ -17,7 +17,7 @@ enum Sort {
     MARKETCAP_REVERSE
 }
 
-export default function DashboardTable({ coins, searchQuery }: { coins: Coin[], searchQuery: string | null }) {
+export default function DashboardTable({ search: coins, searchQuery }: { search: Coin[], searchQuery: string | null }) {
 
     const [coinList, filterCoinList] = createStore({ coinList: coins, originalCoinList: coins });
     const [search, setSearch] = createSignal(searchQuery);
@@ -99,7 +99,7 @@ export default function DashboardTable({ coins, searchQuery }: { coins: Coin[], 
                         <input
                             type="text"
                             id="table-search"
-                            name="coin"
+                            name="search"
                             class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Search for coins..."
                             value={ search() ?? "" }
