@@ -1,5 +1,6 @@
 import { useState } from "react";
 function UserList({ users }) {
+    const hostname = import.meta.env.PUBLIC_POCKETBASE_HOST;
     const userList = users;
     const [searchTerm, setSearchTerm] = useState("");
     const [searchBy, setSearchBy] = useState('username');
@@ -7,12 +8,12 @@ function UserList({ users }) {
         <div className="mx-40 p-10 rounded-2xl">
             <form className="mb-2">
                 <b> Search By:</b>
-                <select className="ml-1 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" id="filter" onChange={(e) => {
+                <select className="ml-2 p-1 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" id="filter" onChange={(e) => {
                     setSearchBy(e.target.value)
                 }} value={searchBy}>
-                    <option value='username'> username </option>
-                    <option value='id'> id </option>
-                    <option value='name'> name </option>
+                    <option value='username'> Username </option>
+                    <option value='id'> ID </option>
+                    <option value='name'> Name </option>
                 </select>
             </form>
             <form className="relative">
@@ -25,9 +26,12 @@ function UserList({ users }) {
                     setSearchTerm(e.target.value)
                 }} /> </form>
 
-            <table className="w-full text-left mt-10 table-auto border rounded-lg shadow-sm text-left rtl:text-right">
+            <table className="w-full text-left mt-4 table-auto border rounded-lg shadow-sm text-left rtl:text-right">
                 <thead className="text-gray-700 uppercase bg-gray-50">
                     <tr>
+                        <th className="px-6 py-3">
+                            
+                        </th>
                         <th className="px-6 py-3">
                             ID
                         </th>
@@ -57,13 +61,32 @@ function UserList({ users }) {
                         .map((user, index) => (
                             <tr key={index} className="bg-white border-b">
                                 <td className="px-6 py-3">
-                                    {user.id}
+                                    <a href={`/profile/${user.id}`}>
+                                        <img
+                                            src={
+                                                user.avatar
+                                                    ? `${hostname}/api/files/_pb_users_auth_/${user.id}/${user.avatar}?token=`
+                                                    : "/misc/default_pfp.jpeg"
+                                            }
+                                            alt="Profile Picture"
+                                            class="h-12 w-12 rounded-full object-cover border border-red-600"
+                                        />
+                                    </a>
                                 </td>
                                 <td className="px-6 py-3">
-                                    {user.username}
+                                    <a href={`/profile/${user.id}`}>
+                                        {user.id}
+                                    </a>
                                 </td>
                                 <td className="px-6 py-3">
-                                    {user.name}
+                                    <a href={`/profile/${user.id}`}>
+                                        {user.username}
+                                    </a>
+                                </td>
+                                <td className="px-6 py-3">
+                                    <a href={`/profile/${user.id}`}>
+                                        {user.name}
+                                    </a>
                                 </td>
                                 <td className="px-6 py-3">
                                     {user.created}
@@ -89,12 +112,7 @@ function UserList({ users }) {
                                             </svg>
                                         </button>}
                                 </form>
-                                </td>
-                                <td className="px-6 py-3 flex justify-end">
-                                    <a href={"/profile/" + user.id} className="bg-red-600 hover:bg-red-700 text-white py-2 px-20 rounded">
-                                        Edit User
-                                    </a>
-                                </td>
+                            </td>
                             </tr>
 
                         ))}
