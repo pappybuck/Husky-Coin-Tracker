@@ -2,6 +2,10 @@
 
 This repository contains the CS4550 final project for Isaac Sadhwani, Bryce Erickson, Harry Allex, Kevin Park and Patrick Buck. Our project is a crypto paper trading and portfolio app with an astro frontend and a go backend. Our database is pocketbase and interacts with our code using CRUD endpoints.  
 
+## Hosting 
+We purchased this domain and hosted it https://www.huskycointracker.com/
+
+
 ## How to Run Locally
 First, install the necessary node packages with  
 ```
