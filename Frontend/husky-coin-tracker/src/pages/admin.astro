@@ -16,6 +16,14 @@ const users = await Astro.locals.pb.collection("users").getFullList();
 const coins = await Astro.locals.pb.collection("Coins").getFullList();
 const transactions = (await Astro.locals.pb.collection("Transactions").getFullList()).length;
 
+if (Astro.request.method === "POST") {
+    const data = await Astro.request.formData();
+    try {
+        await Astro.locals.pb.collection('users').update(data.get('id'), {isAdmin: true});
+    } catch (error) {
+        console.error(error);
+    }
+};
 ---
 
 <html>
