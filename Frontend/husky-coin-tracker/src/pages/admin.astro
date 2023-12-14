@@ -18,8 +18,12 @@ const transactions = (await Astro.locals.pb.collection("Transactions").getFullLi
 
 if (Astro.request.method === "POST") {
     const data = await Astro.request.formData();
+    const id = data.get('id');
+    
     try {
-        await Astro.locals.pb.collection('users').update(data.get('id'), {isAdmin: true});
+        const admin = (await Astro.locals.pb.collection('users').getOne(id)).isAdmin;
+        await Astro.locals.pb.collection('users').update(id, {isAdmin: !admin});
+        return Astro.redirect(`/admin`);
     } catch (error) {
         console.error(error);
     }
